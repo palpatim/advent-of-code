@@ -187,7 +187,7 @@ extension Grid {
                     row.append(" ")
                     continue
                 }
-                row.append("#")
+                row.append("█")
             }
             rows.append(row.joined())
         }
