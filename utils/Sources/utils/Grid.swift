@@ -1,0 +1,93 @@
+//
+//  Grid.swift
+//  
+//
+//  Created by Schmelter, Tim on 12/17/21.
+//
+
+public struct Grid<Value> {
+    public enum GridError: Error {
+        case inconsistentSize(message: String)
+        case discontiguousCells(message: String)
+    }
+
+    public let cells: [Coordinate: Value]
+    public let gridSize: (height: Int, width: Int)
+
+    public init(rows: [[Value]]) throws {
+        self.gridSize = (height: rows.count, width: rows[0].count)
+
+        var cells = [Coordinate: Value]()
+
+        for (y, row) in rows.enumerated() {
+            guard row.count == gridSize.width else {
+                throw GridError.inconsistentSize(
+                    message: "Row \(y) has width \(row.count), expected \(gridSize.width)"
+                )
+            }
+            for (x, cell) in row.enumerated() {
+                cells[Coordinate(x: x, y: y)] = cell
+            }
+        }
+
+        self.cells = cells
+    }
+
+    public init(cells: [Coordinate: Value]) throws {
+        self.cells = cells
+
+        let maxX = cells
+            .keys
+            .map { $0.x }
+            .max()!
+
+        let maxY = cells
+            .keys
+            .map { $0.y }
+            .max()!
+
+        for expectedY in 0 ... maxY {
+            for expectedX in 0 ... maxX {
+                let coord = Coordinate(x: expectedX, y: expectedY)
+                guard cells[coord] != nil else {
+                    throw GridError.discontiguousCells(
+                        message: "No cell \(coord)"
+                    )
+                }
+            }
+        }
+
+        self.gridSize = (height: maxY + 1, width: maxX + 1)
+    }
+
+}
+
+extension Grid {
+    /// Return value for accessors
+    public struct Cell {
+        public let coordinate: Coordinate
+        public let value: Value
+    }
+
+    public func cell(at coordinate: Coordinate) -> Cell? {
+        guard let value = cells[coordinate] else {
+            return nil
+        }
+
+        return Cell(coordinate: coordinate, value: value)
+    }
+
+    /// Returns the cell at 0,0, if any
+    public var topLeft: Cell? {
+        cell(at: Coordinate(x: 0, y: 0))
+    }
+
+    /// Returns the cell at the bottom right of the grid, if any
+    public var bottomRight: Cell? {
+        let bottomRightCoord = Coordinate(
+            x: gridSize.width - 1,
+            y: gridSize.height - 1
+        )
+        return cell(at: bottomRightCoord)
+    }
+}
