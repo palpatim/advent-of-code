@@ -78,6 +78,26 @@ class BinaryTreeTests: XCTestCase {
         XCTAssertEqual(tree.traverse(.inOrder), [4, 2, 5, 1, 3])
     }
 
+    func testInOrderTraversalWithCondition() throws {
+        let treeJSON = """
+        {
+            "value": 1,
+            "left": {
+                "value": 2,
+                "left": { "value": 4 },
+                "right": { "value": 5 }
+            },
+            "right": {
+                "value": 3
+            }
+        }
+        """
+
+        let tree = try BinaryTree<Int>.binaryTree(from: treeJSON.data(using: .utf8)!)
+
+        XCTAssertEqual(tree.traverse(.inOrder) { $0.value == 5 }, [4, 2, 5])
+    }
+
     func testPreOrderTraversal() throws {
         let treeJSON = """
         {
@@ -96,6 +116,26 @@ class BinaryTreeTests: XCTestCase {
         let tree = try BinaryTree<Int>.binaryTree(from: treeJSON.data(using: .utf8)!)
 
         XCTAssertEqual(tree.traverse(.preOrder), [1, 2, 4, 5, 3])
+    }
+
+    func testPreOrderTraversalWithCondition() throws {
+        let treeJSON = """
+        {
+            "value": 1,
+            "left": {
+                "value": 2,
+                "left": { "value": 4 },
+                "right": { "value": 5 }
+            },
+            "right": {
+                "value": 3
+            }
+        }
+        """
+
+        let tree = try BinaryTree<Int>.binaryTree(from: treeJSON.data(using: .utf8)!)
+
+        XCTAssertEqual(tree.traverse(.preOrder) { $0.value == 5 }, [1, 2, 4, 5])
     }
 
     func testPostOrderTraversal() throws {
@@ -118,4 +158,43 @@ class BinaryTreeTests: XCTestCase {
         XCTAssertEqual(tree.traverse(.postOrder), [4, 5, 2, 3, 1])
     }
 
+    func testPostOrderTraversalWithCondition() throws {
+        let treeJSON = """
+        {
+            "value": 1,
+            "left": {
+                "value": 2,
+                "left": { "value": 4 },
+                "right": { "value": 5 }
+            },
+            "right": {
+                "value": 3
+            }
+        }
+        """
+
+        let tree = try BinaryTree<Int>.binaryTree(from: treeJSON.data(using: .utf8)!)
+
+        XCTAssertEqual(tree.traverse(.postOrder) { $0.value == 5 }, [4, 5])
+    }
+
+    func testDepth() throws {
+        let treeJSON = """
+        {
+            "value": 1,
+            "left": {
+                "value": 2,
+                "left": { "value": 4 },
+                "right": { "value": 5 }
+            },
+            "right": {
+                "value": 3
+            }
+        }
+        """
+
+        let tree = try BinaryTree<Int>.binaryTree(from: treeJSON.data(using: .utf8)!)
+
+        XCTAssertEqual(tree.left?.left?.depth, 2)
+    }
 }
