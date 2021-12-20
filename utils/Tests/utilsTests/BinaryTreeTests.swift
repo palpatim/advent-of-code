@@ -197,4 +197,26 @@ class BinaryTreeTests: XCTestCase {
 
         XCTAssertEqual(tree.left?.left?.depth, 2)
     }
+
+    func testHeight() throws {
+        let treeJSON = """
+        {
+            "value": 1,
+            "left": {
+                "value": 2,
+                "left": { "value": 4 },
+                "right": { "value": 5 }
+            },
+            "right": {
+                "value": 3
+            }
+        }
+        """
+
+        let tree = try BinaryTree<Int>.binaryTree(from: treeJSON.data(using: .utf8)!)
+
+        XCTAssertEqual(tree.height, 2)
+        XCTAssertEqual(tree.left?.left?.height, 0)
+    }
+
 }

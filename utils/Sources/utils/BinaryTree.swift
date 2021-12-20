@@ -7,6 +7,12 @@ public final class BinaryTree<Element> {
     public var left: BinaryTree<Element>?
     public var right: BinaryTree<Element>?
 
+    public var height: Int {
+        let selfHeight = left != nil || right != nil ? 1 : 0
+        let childHeight = max(left?.height ?? 0, right?.height ?? 0)
+        return selfHeight + childHeight
+    }
+
     public var depth: Int {
         guard let parent = parent else {
             return 0
