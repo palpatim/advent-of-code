@@ -18,32 +18,57 @@ public struct day17 {
     public static func solvePart2(_ input: String) -> Int {
         let puzzle = parseInput(input)
 
-        // Combinations allowed:
-        // VY > 0 (arcing up)
-        // - min y velocity = ...?
-        // - max y velocity = abs(minY) - 1, as shown in part1
-        // VY <= 0 (arcing down)
-        // - min y velocity = ...?
-        // - max y velocity = ...?
-
-        // X constraints are simpler. minVX must be at least enough to get us to the left boundary
-        // (or else it undershoots and never reaches the target). maxVX must not exceed the right
-        // boundary (or else it overshoots the target on the first step)
+        // minVX must be at least enough to get us to the left boundary
+        // (or else it undershoots and never reaches the target). (Note that
+        // this calculation may actually undershoot b/c of rounding, but
+        // we'll accept that for now.)
         let minX = puzzle.targetTopLeft.x
-        var minVX = Velocity.countOfSeries(withSum: minX)
-        if minVX != Velocity.distanceToZero(positiveInt: minVX) {
-            minVX += 1
+        let minVX = Velocity.countOfSeries(withSum: minX)
+        print("minVX: \(minVX) -> \(Velocity.distanceToZero(positiveInt: minVX))")
+
+        // maxVX must not exceed the right
+        // boundary (or else it overshoots the target on the first step)
+        let maxVX = puzzle.targetBottomRight.x
+
+        // VY can range from the max as shown in part1, to a velocity that hits the
+        // bottom in one step
+        let minY = puzzle.targetBottomRight.y
+        let maxVY = abs(minY)
+        let minVY = -1 * maxVY
+
+        var count = 0
+        for vy in minVY ... maxVY {
+            for vx in minVX ... maxVX {
+                let v = Velocity(x: vx, y: vy)
+                if simulate(v: v, puzzle: puzzle) {
+                    count += 1
+                } else {
+                }
+            }
         }
 
-        let maxX = puzzle.targetBottomRight.x
-        var maxVX = Velocity.countOfSeries(withSum: maxX)
+        return count
+    }
 
-        let xPermutations = maxVX - minVX + 1
+    // Simulates the trajectory from the given initial velocity. Returns `true` if the
+    // trajectory intersects the target area at any whole step
+    private static func simulate(v: Velocity, puzzle: Puzzle) -> Bool {
+        var currentVelocity = v
+        var currentPosition = Coordinate(x: 0, y: 0)
+        while true {
+            if puzzle.intersects(currentPosition) {
+                return true
+            }
+            guard !hasExceededTarget(coordinate: currentPosition, puzzle: puzzle) else {
+                return false
+            }
+            currentPosition = currentPosition.applying(currentVelocity.offset)
+            currentVelocity = currentVelocity.slowdown()
+        }
+    }
 
-        let minY = puzzle.targetBottomRight.y
-        let yHeight = Velocity.distanceToZero(positiveInt: abs(minY) - 1)
-
-        return yHeight
+    private static func hasExceededTarget(coordinate: Coordinate, puzzle: Puzzle) -> Bool {
+        coordinate.y < puzzle.targetBottomRight.y || coordinate.x > puzzle.targetBottomRight.x
     }
 
     private static func parseInput(_ input: String) -> Puzzle {
@@ -72,11 +97,27 @@ public struct day17 {
 public struct Puzzle {
     let targetTopLeft: Coordinate
     let targetBottomRight: Coordinate
+
+    var xRange: ClosedRange<Int> {
+        targetTopLeft.x ... targetBottomRight.x
+    }
+
+    var yRange: ClosedRange<Int> {
+        targetBottomRight.y ... targetTopLeft.y
+    }
+
+    func intersects(_ coordinate: Coordinate) -> Bool {
+        xRange.contains(coordinate.x) && yRange.contains(coordinate.y)
+    }
+
 }
 
 public struct Velocity: Equatable {
     let x: Int
     let y: Int
+    var offset: Offset {
+        Offset(x: x, y: y)
+    }
 }
 
 extension Velocity {

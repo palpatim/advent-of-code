@@ -93,7 +93,7 @@ final class day17Tests: XCTestCase {
 
     func testPart2Real() {
         let result = day17.solvePart2(realInput)
-        XCTAssertEqual(result, 1)
+        XCTAssertEqual(result, 3202)
     }
 
 }
