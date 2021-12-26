@@ -11,8 +11,21 @@ public struct Grid<Value> {
         case discontiguousCells(message: String)
     }
 
-    public let cells: [Coordinate: Value]
+    public private(set) var cells: [Coordinate: Value]
     public let gridSize: (height: Int, width: Int)
+
+    public var cellsInOrder: [[Grid.Cell]] {
+        var rows = [[Grid.Cell]]()
+        for y in 0 ..< gridSize.height {
+            var row = [Cell]()
+            for x in 0 ..< gridSize.width {
+                let coord = Coordinate(x: x, y: y)
+                row.append(Cell(coordinate: coord, value: cells[coord]!))
+            }
+            rows.append(row)
+        }
+        return rows
+    }
 
     public init(rows: [[Value]]) throws {
         self.gridSize = (height: rows.count, width: rows[0].count)
@@ -60,6 +73,12 @@ public struct Grid<Value> {
         self.gridSize = (height: maxY + 1, width: maxX + 1)
     }
 
+    public mutating func setValue(
+        for coordinate: Coordinate,
+        to value: Value
+    ) {
+        cells[coordinate] = value
+    }
 }
 
 extension Grid {
@@ -67,6 +86,13 @@ extension Grid {
     public struct Cell {
         public let coordinate: Coordinate
         public let value: Value
+        public init(
+            coordinate: Coordinate,
+            value: Value
+        ) {
+            self.coordinate = coordinate
+            self.value = value
+        }
     }
 
     public func cell(at coordinate: Coordinate) -> Cell? {
