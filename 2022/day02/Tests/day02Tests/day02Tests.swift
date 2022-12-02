@@ -64,10 +64,8 @@ enum MovePickingStrategy {
     /// Symbols represent shapes: X == Rock; Y == Paper; Z == Scissors
     case shape
 
-    /// Symbols represent shapes: X == Lose; Y == Draw; Z == Win
+    /// Symbols represent outcomes: X == Lose; Y == Draw; Z == Win
     case outcome
-
-
 }
 
 enum Shape {
