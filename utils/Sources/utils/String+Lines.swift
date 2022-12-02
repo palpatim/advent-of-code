@@ -17,3 +17,15 @@ extension String {
         components(separatedBy: "\n")
     }
 }
+
+// MARK: - Errors
+
+public struct StringParsingError: Error {
+    public let message: String
+    public let underlyingError: Error?
+
+    public init(_ message: String, _ underlyingError: Error? = nil) {
+        self.message = message
+        self.underlyingError = underlyingError
+    }
+}
