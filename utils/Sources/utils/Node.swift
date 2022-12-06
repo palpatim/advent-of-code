@@ -41,3 +41,15 @@ extension Node: CustomDebugStringConvertible {
         "\(value): \(neighbors.map({"\($0.value)"}).joined(separator: ","))"
     }
 }
+
+// MARK: - Extensions
+
+extension Node where Value: Numeric {
+    var sum: Value {
+        let neighborSum = neighbors
+            .map { $0.value }
+            .reduce(0, +)
+
+        return neighborSum + value
+    }
+}
