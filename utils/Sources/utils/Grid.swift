@@ -14,8 +14,9 @@ public struct Grid<Value> {
     public private(set) var cells: [Coordinate: Value]
     public let gridSize: (height: Int, width: Int)
 
-    public var cellsInOrder: [[Grid.Cell]] {
-        var rows = [[Grid.Cell]]()
+    @available(*, deprecated, message: "Use cellArray")
+    public var cellsInOrder: [[Cell]] {
+        var rows = [[Cell]]()
         for y in 0 ..< gridSize.height {
             var row = [Cell]()
             for x in 0 ..< gridSize.width {
@@ -25,6 +26,42 @@ public struct Grid<Value> {
             rows.append(row)
         }
         return rows
+    }
+
+    public var cellArray: [Cell] {
+        var cells = [Cell]()
+        for y in 0 ..< gridSize.height {
+            for x in 0 ..< gridSize.width {
+                let coord = Coordinate(x: x, y: y)
+                if let cell = cell(at: coord) {
+                    cells.append(cell)
+                }
+            }
+        }
+        return cells
+    }
+
+    /// Returns an array of cells starting with `start`, moving in `direction`.
+    ///
+    /// - Parameters:
+    ///   - start: starting cell
+    ///   - direction: direction to move
+    public func cells(
+        startingWith start: Cell,
+        moving direction: Direction
+    ) -> [Cell] {
+        var result = [start]
+        var current = start
+        while
+            let next = cell(
+                offset: direction.unitOffset,
+                awayFrom: current
+            )
+        {
+            result.append(next)
+            current = next
+        }
+        return result
     }
 
     public init(rows: [[Value]]) throws {
@@ -101,6 +138,11 @@ extension Grid {
         }
 
         return Cell(coordinate: coordinate, value: value)
+    }
+
+    public func cell(offset: Offset, awayFrom start: Cell) -> Cell? {
+        let newCoordinate = start.coordinate.applying(offset)
+        return cell(at: newCoordinate)
     }
 
     /// Returns the cell at 0,0, if any
