@@ -24,14 +24,14 @@ extension Direction {
     /// Returns an Offset of magnitude 1 along each axis
     public var unitOffset: Offset {
         switch self {
-        case .n: return Offset(x: 0, y: -1)
-        case .ne: return Offset(x: 1, y: -1)
         case .e: return Offset(x: 1, y: 0)
-        case .se: return Offset(x: 1, y: 1)
-        case .s: return Offset(x: 0, y: 1)
-        case .sw: return Offset(x: -1, y: 1)
+        case .ne: return Offset(x: 1, y: 1)
+        case .n: return Offset(x: 0, y: 1)
+        case .nw: return Offset(x: -1, y: 1)
         case .w: return Offset(x: -1, y: 0)
-        case .nw: return Offset(x: -1, y: -1)
+        case .sw: return Offset(x: -1, y: -1)
+        case .s: return Offset(x: 0, y: -1)
+        case .se: return Offset(x: 1, y: -1)
         }
     }
 }
