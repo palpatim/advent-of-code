@@ -13,11 +13,6 @@ final class aocTests: XCTestCase {
     }
 
     func testPart2Sample() async throws {
-        let actual = try await Solution.solve("sample.txt", ropeLength: 9)
-        XCTAssertEqual(actual, 1)
-    }
-
-    func testPart2Other() async throws {
         let actual = try await Solution.solve("sample.txt", ropeLength: 10)
         XCTAssertEqual(actual, 36)
     }
