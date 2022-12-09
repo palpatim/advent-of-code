@@ -92,12 +92,4 @@ public enum Direction: CaseIterable {
 
 }
 
-private extension Range<Float> {
-    static func range(of size: Float, centeredOn center: Float) -> Range<Float> {
-        let lowerBound = center - (size / 2)
-        let upperBound = center + (size / 2)
-        return lowerBound ..< upperBound
-    }
-}
-
 extension Direction: Hashable { }
