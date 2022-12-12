@@ -16,7 +16,7 @@ public struct Edge<Value> {
     public init(
         source: Vertex<Value>,
         destination: Vertex<Value>,
-        weight: Double = 0.0
+        weight: Double = 1.0
     ) {
         self.source = source
         self.destination = destination

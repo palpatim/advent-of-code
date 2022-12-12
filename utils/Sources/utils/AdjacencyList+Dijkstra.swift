@@ -20,6 +20,21 @@ extension AdjacencyList {
         from source: Vertex<Element>,
         to destination: Vertex<Element>
     ) -> [Edge<Element>]? {
+        shortestPath(from: source) { $0 == destination }
+    }
+
+    /// Returns an array of edges representing the shortest path from `source` to some vertex where `condition` is fulfilled
+    ///
+    /// This method uses Dijkstra's algorithm to find the lowest-cost path between the two vertices.
+    ///
+    /// - Parameters:
+    ///   - source: the source vertex
+    ///   - condition: a closure that accepts a candidate vertex and returns true if the search should stop, or false if it should continue
+    /// - Returns: an array of edges, or nil if there is no path that satisfies the condition
+    public func shortestPath(
+        from source: Vertex<Element>,
+        stoppingWhen condition: (Vertex<Element>) -> Bool
+    ) -> [Edge<Element>]? {
         var visits = [source: Visit<Element>.source]
 
         let priorityQueue = PriorityQueue<Vertex<Element>> {
@@ -28,8 +43,8 @@ extension AdjacencyList {
         priorityQueue.enqueue(source)
 
         while let visitedVertex = priorityQueue.dequeue() {
-            if visitedVertex == destination {
-                return path(to: destination, in: visits)
+            if condition(visitedVertex) {
+                return path(to: visitedVertex, in: visits)
             }
 
             let neighbors = edges(from: visitedVertex) ?? []
@@ -52,6 +67,7 @@ extension AdjacencyList {
 
         return nil
     }
+
 
     private func path(
         to destination: Vertex<Element>,

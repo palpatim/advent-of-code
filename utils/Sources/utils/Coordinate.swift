@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Coordinate: Hashable {
+public struct Coordinate {
     public let x: Int
     public let y: Int
 
@@ -20,6 +20,18 @@ public struct Coordinate: Hashable {
         let components = stringValue.components(separatedBy: ",")
         self.x = Int(components[0])!
         self.y = Int(components[1])!
+    }
+
+    public static func xy(_ x: Int, _ y: Int) -> Coordinate {
+        Coordinate(x: x, y: y)
+    }
+
+    /// Returns the nearest direction to `other`, calculated where x-axis is 0
+    public func direction(to other: Coordinate) -> Direction {
+        let dX = Float(other.x - self.x)
+        let dY = Float(other.y - self.y)
+        let theta = atan2(dY, dX)
+        return Direction(radians: theta)!
     }
 
     /// Returns the Euclidian distance to other
@@ -36,21 +48,14 @@ public struct Coordinate: Hashable {
         return dX <= 1 && dY <= 1
     }
 
-    /// Returns the nearest direction to `other`, calculated where x-axis is 0
-    public func direction(to other: Coordinate) -> Direction {
-        let dX = Float(other.x - self.x)
-        let dY = Float(other.y - self.y)
-        let theta = atan2(dY, dX)
-        return Direction(radians: theta)!
-    }
-
 }
+
+extension Coordinate: Equatable { }
+
+extension Coordinate: Hashable { }
 
 extension Coordinate: CustomDebugStringConvertible {
     public var debugDescription: String {
         "(\(x),\(y))"
     }
-}
-
-private extension Direction {
 }

@@ -35,6 +35,9 @@ class Solution {
         }
 
         for line in try String.lines(fromFile: fileURL) {
+            guard !line.isEmpty else {
+                continue
+            }
 
         }
 

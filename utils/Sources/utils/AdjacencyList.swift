@@ -21,7 +21,7 @@ extension AdjacencyList: Graphable {
         _ type: EdgeType,
         from source: Vertex<Element>,
         to destination: Vertex<Element>,
-        weight: Double = 0.0
+        weight: Double = 1.0
     ) {
         switch type {
         case .directed:
@@ -79,7 +79,7 @@ extension AdjacencyList: Graphable {
     private func addDirectedEdge(
         from source: Vertex<Element>,
         to destination: Vertex<Element>,
-        weight: Double = 0.0
+        weight: Double = 1.0
     ) {
         let edge = Edge(
             source: source,
@@ -91,7 +91,7 @@ extension AdjacencyList: Graphable {
 
     private func addUndirectedEdge(
         vertices: (Vertex<Element>, Vertex<Element>),
-        weight: Double = 0.0
+        weight: Double = 1.0
     ) {
         let (source, destination) = vertices
         addDirectedEdge(from: source, to: destination, weight: weight)

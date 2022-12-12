@@ -6,77 +6,31 @@
 //
 
 public struct Grid<Value> {
-    public enum GridError: Error {
-        case inconsistentSize(message: String)
-        case discontiguousCells(message: String)
-    }
 
-    public private(set) var cells: [Coordinate: Value]
-    public let gridSize: (height: Int, width: Int)
+    public internal(set) var cells: [Coordinate: Value]
 
-    @available(*, deprecated, message: "Use cellArray")
-    public var cellsInOrder: [[Cell]] {
-        var rows = [[Cell]]()
-        for y in 0 ..< gridSize.height {
-            var row = [Cell]()
-            for x in 0 ..< gridSize.width {
-                let coord = Coordinate(x: x, y: y)
-                row.append(Cell(coordinate: coord, value: cells[coord]!))
-            }
-            rows.append(row)
-        }
-        return rows
-    }
-
-    public var cellArray: [Cell] {
-        var cells = [Cell]()
-        for y in 0 ..< gridSize.height {
-            for x in 0 ..< gridSize.width {
-                let coord = Coordinate(x: x, y: y)
-                if let cell = cell(at: coord) {
-                    cells.append(cell)
-                }
-            }
-        }
-        return cells
-    }
-
-    /// Returns an array of cells starting with `start`, moving in `direction`.
-    ///
-    /// - Parameters:
-    ///   - start: starting cell
-    ///   - direction: direction to move
-    public func cells(
-        startingWith start: Cell,
-        moving direction: Direction
-    ) -> [Cell] {
-        var result = [start]
-        var current = start
-        while
-            let next = cell(
-                offset: direction.unitOffset,
-                awayFrom: current
-            )
-        {
-            result.append(next)
-            current = next
-        }
-        return result
+    // Overloading a Coordinate to store the gridSize since non-nominal types cannot conform to
+    // protocols
+    private let _gridSize: Coordinate
+    public var gridSize: (height: Int, width: Int) {
+        (height: _gridSize.y, width: _gridSize.x)
     }
 
     public init(rows: [[Value]]) throws {
-        self.gridSize = (height: rows.count, width: rows[0].count)
+        let height = rows.count
+        let width = rows[0].count
+        self._gridSize = .xy(width, height)
 
         var cells = [Coordinate: Value]()
 
         for (y, row) in rows.enumerated() {
-            guard row.count == gridSize.width else {
+            guard row.count == width else {
                 throw GridError.inconsistentSize(
-                    message: "Row \(y) has width \(row.count), expected \(gridSize.width)"
+                    message: "Row \(y) has width \(row.count), expected \(width)"
                 )
             }
             for (x, cell) in row.enumerated() {
-                cells[Coordinate(x: x, y: y)] = cell
+                cells[.xy(x, y)] = cell
             }
         }
 
@@ -107,55 +61,16 @@ public struct Grid<Value> {
             }
         }
 
-        self.gridSize = (height: maxY + 1, width: maxX + 1)
+        self._gridSize = .xy(maxX + 1, maxY + 1)
     }
 
-    public mutating func setValue(
-        for coordinate: Coordinate,
-        to value: Value
-    ) {
-        cells[coordinate] = value
-    }
 }
 
-extension Grid {
-    /// Return value for accessors
-    public struct Cell {
-        public let coordinate: Coordinate
-        public let value: Value
-        public init(
-            coordinate: Coordinate,
-            value: Value
-        ) {
-            self.coordinate = coordinate
-            self.value = value
-        }
-    }
-
-    public func cell(at coordinate: Coordinate) -> Cell? {
-        guard let value = cells[coordinate] else {
-            return nil
-        }
-
-        return Cell(coordinate: coordinate, value: value)
-    }
-
-    public func cell(offset: Offset, awayFrom start: Cell) -> Cell? {
-        let newCoordinate = start.coordinate.applying(offset)
-        return cell(at: newCoordinate)
-    }
-
-    /// Returns the cell at 0,0, if any
-    public var topLeft: Cell? {
-        cell(at: Coordinate(x: 0, y: 0))
-    }
-
-    /// Returns the cell at the bottom right of the grid, if any
-    public var bottomRight: Cell? {
-        let bottomRightCoord = Coordinate(
-            x: gridSize.width - 1,
-            y: gridSize.height - 1
-        )
-        return cell(at: bottomRightCoord)
-    }
+public enum GridError: Error {
+    case inconsistentSize(message: String)
+    case discontiguousCells(message: String)
 }
+
+extension Grid: Equatable where Value: Equatable { }
+
+extension Grid: Hashable where Value: Hashable { }
