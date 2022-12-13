@@ -1,4 +1,4 @@
-public struct day01 {
+public enum day01 {
     public static func solve(
         forNElements n: Int,
         input: [Int],
@@ -57,5 +57,4 @@ public struct day01 {
 
         return result
     }
-
 }

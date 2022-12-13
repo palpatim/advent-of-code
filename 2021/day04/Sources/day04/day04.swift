@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day04 {
+public enum day04 {
     public static func solve(_ input: String, exitAfterFirst: Bool = true) -> Int {
         var game = parseInput(input)
         game.play(exitAfterFirst: exitAfterFirst)
@@ -31,11 +31,9 @@ public struct day04 {
         }
         boards.append(Board(rows: rows))
 
-
         let game = Game(calls: calls, boards: boards)
         return game
     }
-
 }
 
 public struct Game {
@@ -47,11 +45,11 @@ public struct Game {
     public init(calls: [Int], boards: [Board]) {
         self.calls = calls
         self.boards = boards
-        self.winningBoardIndex = Int.min
-        self.winningBoardCount = 0
+        winningBoardIndex = Int.min
+        winningBoardCount = 0
     }
 
-    mutating public func play(exitAfterFirst: Bool) {
+    public mutating func play(exitAfterFirst: Bool) {
         for call in calls {
             for index in 0 ..< boards.count {
                 guard !boards[index].hasWon else {
@@ -94,8 +92,8 @@ public struct Board {
 
     public init(rows: [Row]) {
         self.rows = rows
-        self.lastCall = Int.min
-        self.hasWon = false
+        lastCall = Int.min
+        hasWon = false
         var numbersByCoordinate = [Int: Coordinate]()
         var wins: [
             WinDirection: [
@@ -103,7 +101,7 @@ public struct Board {
             ]
         ] = [
             .row: [:],
-            .col: [:]
+            .col: [:],
         ]
 
         // Set up empty wins structure

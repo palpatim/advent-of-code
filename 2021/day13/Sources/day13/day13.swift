@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day13 {
+public enum day13 {
     public enum FoldDirections {
         case horizontal, vertical
     }
@@ -65,11 +65,11 @@ public struct day13 {
 
                 for instruction in foldInstructions {
                     switch instruction {
-                    case .x(let value):
+                    case let .x(value):
                         foldedX = foldedX > value
                             ? 2 * value - foldedX
                             : foldedX
-                    case .y(let value):
+                    case let .y(value):
                         foldedY = foldedY > value
                             ? 2 * value - foldedY
                             : foldedY
@@ -117,7 +117,7 @@ public struct Grid<T> {
     let gridSize: (height: Int, width: Int)
 
     public init(rows: [[T]]) {
-        self.gridSize = (height: rows.count, width: rows[0].count)
+        gridSize = (height: rows.count, width: rows[0].count)
 
         // We could do this in a single pass, but it's easier to read as two passes,
         // one to populate the coordinate map, one to link up the neighbors
@@ -143,19 +143,19 @@ public struct Grid<T> {
             .map { $0.y }
             .max()!
 
-        self.gridSize = (height: maxY + 1, width: maxX + 1)
+        gridSize = (height: maxY + 1, width: maxX + 1)
     }
 }
 
-extension Grid {
-    public struct Offset {
+public extension Grid {
+    struct Offset {
         let x: Int
         let y: Int
     }
 }
 
-extension Grid {
-    public struct Coordinate: Hashable {
+public extension Grid {
+    struct Coordinate: Hashable {
         let x: Int
         let y: Int
 
@@ -166,8 +166,8 @@ extension Grid {
 
         public init(stringValue: String) {
             let components = stringValue.components(separatedBy: ",")
-            self.x = Int(components[0])!
-            self.y = Int(components[1])!
+            x = Int(components[0])!
+            y = Int(components[1])!
         }
 
         func applying(_ offset: Offset) -> Coordinate {
@@ -176,8 +176,8 @@ extension Grid {
     }
 }
 
-extension Grid {
-    public func printGrid() {
+public extension Grid {
+    func printGrid() {
         var rows = [String]()
         for y in 0 ..< gridSize.height {
             var row = [String]()

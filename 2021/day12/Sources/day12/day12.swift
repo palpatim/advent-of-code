@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day12 {
+public enum day12 {
     public static func solve(_ input: String, allowingRepeat: Bool) -> Int {
         let start = parseInput(input)
         let paths = getAllPaths(from: start, allowingRepeat: allowingRepeat)
@@ -74,7 +74,7 @@ public struct day12 {
                 !$0.isSmall || !path.contains($0)
             }
         } else {
-            neighbors = Array(cave.neighbors.filter { $0.id != "start" } )
+            neighbors = Array(cave.neighbors.filter { $0.id != "start" })
         }
 
         var candidatePaths = [[Cave]]()
@@ -95,13 +95,13 @@ class Cave {
 
     public init(id: String) {
         self.id = id
-        self.isSmall = id == id.lowercased()
-        self.neighbors = []
+        isSmall = id == id.lowercased()
+        neighbors = []
     }
 }
 
 extension Cave: Equatable {
-    public static func ==(_ lhs: Cave, _ rhs: Cave) -> Bool {
+    public static func == (_ lhs: Cave, _ rhs: Cave) -> Bool {
         lhs.id == rhs.id
     }
 }
@@ -118,10 +118,9 @@ extension Cave: CustomDebugStringConvertible {
     }
 }
 
-extension Sequence where Element: Hashable {
-
+public extension Sequence where Element: Hashable {
     /// True if the sequence contains any repeated element
-    public func containsRepeatedElement() -> Bool {
+    func containsRepeatedElement() -> Bool {
         var seen = Set<Element>()
         for element in self {
             guard !seen.contains(element) else {
@@ -131,5 +130,4 @@ extension Sequence where Element: Hashable {
         }
         return false
     }
-
 }

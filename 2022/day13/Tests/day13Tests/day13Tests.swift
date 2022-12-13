@@ -1,5 +1,5 @@
-import XCTest
 import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
@@ -21,12 +21,11 @@ final class aocTests: XCTestCase {
         let actual = try await Solution.solve("real.txt", strategy: .decoderKey)
         XCTAssertEqual(actual, 22344)
     }
-
 }
 
 // MARK: - Solution
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         strategy: Strategy
@@ -50,7 +49,6 @@ class Solution {
         var currentPacketIndex = 1
         for line in try String.lines(fromFile: fileURL) {
             if line.isEmpty {
-                print("Processing index \(currentPacketIndex)")
                 if validatePackets(lhs: lhs, rhs: rhs) {
                     validPacketIndexes.append(currentPacketIndex)
                 }
@@ -73,13 +71,11 @@ class Solution {
         }
 
         if let lhs, let rhs {
-//            print("Processing index \(currentPacketIndex)")
             if validatePackets(lhs: lhs, rhs: rhs) {
                 validPacketIndexes.append(currentPacketIndex)
             }
         }
 
-//        print("validPacketIndexes: \(validPacketIndexes)")
         return validPacketIndexes.reduce(0, +)
     }
 
@@ -128,10 +124,10 @@ class Solution {
 
         return result == .valid
     }
-
 }
 
 // MARK: - Structures
+
 enum Strategy {
     case validCount
     case decoderKey
@@ -144,17 +140,16 @@ enum ValidationResult {
 extension PacketData {
     func validate(_ other: PacketData) -> ValidationResult {
         switch (self, other) {
-
-        case (.int(let lValue), .int(let rValue)):
+        case let (.int(lValue), .int(rValue)):
             return PacketData.validate(lhs: lValue, rhs: rValue)
 
-        case (.list(let lValue), .list(let rValue)):
+        case let (.list(lValue), .list(rValue)):
             return PacketData.validate(lhs: lValue, rhs: rValue)
 
-        case (.list(_), .int(let rValue)):
-            return self.validate(PacketData.list([.int(rValue)]))
+        case let (.list(_), .int(rValue)):
+            return validate(PacketData.list([.int(rValue)]))
 
-        case (.int(let lValue), .list(_)):
+        case let (.int(lValue), .list(_)):
             return PacketData.list([.int(lValue)]).validate(other)
         }
     }
@@ -191,18 +186,16 @@ extension PacketData {
 
         return .undetermined
     }
-
 }
 
 extension Array {
     func get(_ index: Index) -> Element? {
-        if index < 0 || index >= self.count {
+        if index < 0 || index >= count {
             return nil
         }
         return self[index]
     }
 }
-
 
 // Adapted from
 // https://github.com/aws-amplify/amplify-swift/blob/main/Amplify/Core/Support/JSONValue.swift
@@ -232,18 +225,17 @@ extension PacketData: Codable {
         var container = encoder.singleValueContainer()
 
         switch self {
-        case .list(let value):
+        case let .list(value):
             try container.encode(value)
-        case .int(let value):
+        case let .int(value):
             try container.encode(value)
         }
     }
-
 }
 
-extension PacketData: Hashable { }
+extension PacketData: Hashable {}
 
-extension PacketData: Equatable { }
+extension PacketData: Equatable {}
 
 extension PacketData: ExpressibleByArrayLiteral {
     public init(arrayLiteral elements: PacketData...) {

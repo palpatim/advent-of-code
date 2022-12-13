@@ -1,6 +1,6 @@
-import XCTest
-import utils
 @testable import day04
+import utils
+import XCTest
 
 final class day04Tests: XCTestCase {
     func testPart1Sample() async throws {
@@ -22,20 +22,19 @@ final class day04Tests: XCTestCase {
     }
 
     func testPart2Sample() async throws {
-        let actual = try await Solution.solve("sample.txt", { $0.overlaps($1) })
+        let actual = try await Solution.solve("sample.txt") { $0.overlaps($1) }
         XCTAssertEqual(actual, 4)
     }
 
     func testPart2Real() async throws {
-        let actual = try await Solution.solve("real.txt", { $0.overlaps($1) })
+        let actual = try await Solution.solve("real.txt") { $0.overlaps($1) }
         XCTAssertEqual(actual, 847)
     }
-
 }
 
 // MARK: - Solution
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         _ overlapComparison: (ClosedRange<Int>, ClosedRange<Int>) -> Bool
@@ -58,15 +57,14 @@ class Solution {
 
         return containsCount
     }
-
 }
 
 // MARK: - Extensions
 
 extension ClosedRange<Int> {
     func isSupersetOf(_ other: ClosedRange<Bound>) -> Bool {
-        let startContains = self.lowerBound <= other.lowerBound
-        let endContains = other.upperBound <= self.upperBound
+        let startContains = lowerBound <= other.lowerBound
+        let endContains = other.upperBound <= upperBound
         return startContains && endContains
     }
 }

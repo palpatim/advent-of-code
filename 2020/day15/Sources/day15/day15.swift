@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day15 {
+public enum day15 {
     public static func solve(
         _ input: String,
         playingTo limit: Int
@@ -31,12 +31,12 @@ public struct day15 {
             let newHistory: History
             if let history = seen[lastSpoken] {
                 switch history {
-                case .moreThanOnce(let prev, let mostRecent):
+                case let .moreThanOnce(prev, mostRecent):
                     newHistory = .moreThanOnce(
                         prev: mostRecent,
                         mostRecent: turn
                     )
-                case .once(let prevTurn):
+                case let .once(prevTurn):
                     newHistory = .moreThanOnce(
                         prev: prevTurn,
                         mostRecent: turn
@@ -57,7 +57,7 @@ public struct day15 {
             defer {
                 turn += 1
             }
-            guard case .moreThanOnce(let prev, let mostRecent) = seen[lastSpoken] else {
+            guard case let .moreThanOnce(prev, mostRecent) = seen[lastSpoken] else {
                 speak(0)
                 continue
             }

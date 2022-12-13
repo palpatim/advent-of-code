@@ -1,6 +1,4 @@
-public struct day05 {
-
-}
+public struct day05 {}
 
 public struct BoardingPass {
     // BoardingPass format is dependent on plane size
@@ -63,7 +61,7 @@ public struct BoardingPass {
         var directions = directions
         var start = range.first!
         var end = range.last!
-        while start <= end && !directions.isEmpty {
+        while start <= end, !directions.isEmpty {
             let midpoint = start + ((end - start) / 2)
             let direction = directions.removeFirst()
             switch direction {

@@ -1,6 +1,6 @@
 //
 //  PriorityQueue.swift
-//  
+//
 //
 //  Created by Schmelter, Tim on 12/17/21.
 //
@@ -12,7 +12,7 @@ public class PriorityQueue<Value: Hashable> {
     private let comparator: Comparator
 
     public init(prioritizingWith comparator: @escaping Comparator) {
-        self.heap = []
+        heap = []
         self.comparator = comparator
     }
 
@@ -29,8 +29,8 @@ public class PriorityQueue<Value: Hashable> {
     }
 
     public func append(_ value: Value) {
-        heap.append(value);
-        siftUp();
+        heap.append(value)
+        siftUp()
     }
 
     public func dequeue() -> Value? {
@@ -107,7 +107,7 @@ public class PriorityQueue<Value: Hashable> {
     private func siftUp(from index: Int) {
         var current = index
         var parent = parentIndex(of: current)
-        while current > 0 && isHigherPriority(at: current, than: parent) {
+        while current > 0, isHigherPriority(at: current, than: parent) {
             heap.swapAt(current, parent)
             current = parent
             parent = parentIndex(of: current)
@@ -125,7 +125,7 @@ public class PriorityQueue<Value: Hashable> {
 
         while
             (leftIndex < count && isHigherPriority(at: leftIndex, than: current))
-                || (rightIndex < count && isHigherPriority(at: rightIndex, than: current))
+            || (rightIndex < count && isHigherPriority(at: rightIndex, than: current))
         {
             let maxChildIndex = highestPriorityIndexOf(leftIndex, rightIndex)
             heap.swapAt(current, maxChildIndex)

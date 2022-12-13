@@ -1,5 +1,5 @@
-import XCTest
 import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
@@ -9,19 +9,18 @@ final class aocTests: XCTestCase {
 
     func testPart1Real() async throws {
         let actual = try await Solution.solve("real.txt", strategy: .small)
-        XCTAssertEqual(actual, 107822)
+        XCTAssertEqual(actual, 107_822)
     }
 
     func testPart2Sample() async throws {
         let actual = try await Solution.solve("sample.txt", strategy: .large)
-        XCTAssertEqual(actual, 2713310158)
+        XCTAssertEqual(actual, 2_713_310_158)
     }
 
     func testPart2Real() async throws {
         let actual = try await Solution.solve("real.txt", strategy: .large)
-        XCTAssertEqual(actual, 27267163742)
+        XCTAssertEqual(actual, 27_267_163_742)
     }
-
 }
 
 // MARK: - Solution
@@ -33,12 +32,12 @@ enum Strategy {
     var rounds: Int {
         switch self {
         case .small: return 20
-        case .large: return 10_000
+        case .large: return 10000
         }
     }
 }
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         strategy: Strategy
@@ -221,17 +220,16 @@ class Monkey {
 
 extension StringProtocol {
     func suffix(afterFirstInstanceOf target: Self) -> Self.SubSequence? {
-        guard let firstOccurrence = self.ranges(of: target).first else {
+        guard let firstOccurrence = ranges(of: target).first else {
             return nil
         }
         return suffix(from: firstOccurrence.upperBound)
     }
 
     func prefix(upToFirstInstanceOf target: Self) -> Self.SubSequence? {
-        guard let firstOccurrence = self.ranges(of: target).first else {
+        guard let firstOccurrence = ranges(of: target).first else {
             return nil
         }
         return prefix(upTo: firstOccurrence.lowerBound)
     }
-
 }

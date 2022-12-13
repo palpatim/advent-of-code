@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day12 {
+public enum day12 {
     public static func solvePart1(_ input: String) -> Int {
         let commands = parseInput(input)
         var boat = Boat(position: GridPoint(x: 0, y: 0), heading: .e)
@@ -21,7 +21,7 @@ public struct day12 {
 
     private static func parseInput(_ input: String) -> [NavigationCommand] {
         let lines = input.components(separatedBy: "\n")
-        return lines.map { NavigationCommand.init(inputValue: $0) }
+        return lines.map { NavigationCommand(inputValue: $0) }
     }
 
     private static func navigate(
@@ -96,7 +96,7 @@ struct Boat {
         if let waypoint = waypoint {
             let xOffset = waypoint.x * units
             let yOffset = waypoint.y * units
-            self.position = position.translated(
+            position = position.translated(
                 byX: xOffset,
                 byY: yOffset
             )
@@ -117,11 +117,11 @@ struct Boat {
 extension Boat {
     mutating func apply(_ command: NavigationCommand) {
         switch command {
-        case .translate(let direction, let units):
+        case let .translate(direction, units):
             translate(direction, by: units)
-        case .rotate(let direction, let degrees):
+        case let .rotate(direction, degrees):
             rotate(direction, by: degrees)
-        case .forward(let units):
+        case let .forward(units):
             forward(units)
         }
     }

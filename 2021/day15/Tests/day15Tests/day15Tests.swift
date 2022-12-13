@@ -1,5 +1,5 @@
-import XCTest
 @testable import day15
+import XCTest
 
 final class day15Tests: XCTestCase {
     func testPart1Sample() throws {
@@ -17,7 +17,6 @@ final class day15Tests: XCTestCase {
     func testPart2Real() throws {
         XCTAssertEqual(day15.solve(realInput, tileCount: 5), 2800)
     }
-
 }
 
 // MARK: - Inputs

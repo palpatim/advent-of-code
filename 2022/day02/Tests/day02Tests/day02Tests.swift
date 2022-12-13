@@ -1,6 +1,6 @@
-import XCTest
-import utils
 @testable import day02
+import utils
+import XCTest
 
 final class day02Tests: XCTestCase {
     func testPart1Sample() async throws {
@@ -22,12 +22,11 @@ final class day02Tests: XCTestCase {
         let actual = try await Solution.solve("part2.real.txt", strategy: .outcome)
         XCTAssertEqual(actual, 12989)
     }
-
 }
 
 // MARK: - Solution
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         strategy: MovePickingStrategy
@@ -54,7 +53,6 @@ class Solution {
 
         return totalScore
     }
-
 }
 
 // MARK: - Structures
@@ -182,7 +180,6 @@ enum Outcome {
         default: fatalError("Unrecognized myMove: \(outcomeSymbol)")
         }
     }
-
 }
 
 struct Round {

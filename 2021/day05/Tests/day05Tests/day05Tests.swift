@@ -1,5 +1,5 @@
-import XCTest
 @testable import day05
+import XCTest
 
 final class day05Tests: XCTestCase {
     func testDirection() {
@@ -58,7 +58,6 @@ final class day05Tests: XCTestCase {
             ),
             .ne
         )
-
     }
 
     func testGetAllCoordinates() {
@@ -157,7 +156,6 @@ final class day05Tests: XCTestCase {
                 Coordinate(x: -5, y: -5),
             ]
         )
-
     }
 
     func testPart1Sample() throws {
@@ -183,7 +181,6 @@ final class day05Tests: XCTestCase {
         let expected = 16716
         XCTAssertEqual(actual, expected)
     }
-
 }
 
 // MARK: - Input

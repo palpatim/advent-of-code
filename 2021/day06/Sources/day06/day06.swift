@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day06 {
+public enum day06 {
     public static func solve(_ input: String, days: Int) -> Int {
         var school = parseInput(input)
         school.evolve(days: days)
@@ -12,7 +12,6 @@ public struct day06 {
         let school = FishSchool(fishTimers: timers)
         return school
     }
-
 }
 
 public struct FishSchool {
@@ -42,7 +41,7 @@ public struct FishSchool {
         for fish in fishTimers {
             counters[fish] += 1
         }
-        self.fishCountsByTimer = counters
+        fishCountsByTimer = counters
     }
 
     /// We evolve the school by removing the first item of the array,
@@ -58,5 +57,4 @@ public struct FishSchool {
         fishCountsByTimer[FishSchool.indexForNewParent] += breeders
         fishCountsByTimer.append(breeders)
     }
-
 }

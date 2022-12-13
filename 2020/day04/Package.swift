@@ -9,7 +9,8 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "day04",
-            targets: ["day04"]),
+            targets: ["day04"]
+        ),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -20,9 +21,11 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "day04",
-            dependencies: []),
+            dependencies: []
+        ),
         .testTarget(
             name: "day04Tests",
-            dependencies: ["day04"]),
+            dependencies: ["day04"]
+        ),
     ]
 )

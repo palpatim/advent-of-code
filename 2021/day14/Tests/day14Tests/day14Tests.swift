@@ -1,5 +1,5 @@
-import XCTest
 @testable import day14
+import XCTest
 
 final class day14Tests: XCTestCase {
     func testPairs() {
@@ -38,7 +38,7 @@ final class day14Tests: XCTestCase {
         XCTAssertEqual(characterCounts, [
             "N": 2,
             "C": 1,
-            "B": 1
+            "B": 1,
         ])
     }
 
@@ -54,12 +54,12 @@ final class day14Tests: XCTestCase {
 
     func testPart2Sample() {
         let actual = day14.solve(sampleInput, count: 40)
-        XCTAssertEqual(actual, 2188189693529)
+        XCTAssertEqual(actual, 2_188_189_693_529)
     }
 
     func testPart2Real() {
         let actual = day14.solve(realInput, count: 40)
-        XCTAssertEqual(actual, 3447389044530)
+        XCTAssertEqual(actual, 3_447_389_044_530)
     }
 
     func pairCounts(from pairs: [String: Int]) -> Int {

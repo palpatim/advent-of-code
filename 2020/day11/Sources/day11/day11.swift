@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day11 {
+public enum day11 {
     public static func solvePart1(_ input: String) -> Int {
         let floorMap = parseInput(input)
         let fullyEvolvedMap = evolveUntilStatic(
@@ -129,7 +129,6 @@ public struct day11 {
             return cell
         }
     }
-
 }
 
 typealias FloorMap = [FloorRow]
@@ -207,7 +206,7 @@ extension FloorMap {
 
     /// Returns the seating state at the specified coordinates, or nil if the coordinates aren't valid
     func seatAt(_ point: GridPoint) -> SeatingType? {
-        guard point.y >= 0, point.y < self.count else {
+        guard point.y >= 0, point.y < count else {
             return nil
         }
 
@@ -240,11 +239,11 @@ extension FloorMap {
         from point: GridPoint,
         along sightlineDirection: DirectionOffset
     ) -> SeatingType? {
-        var firstSeat: SeatingType? = nil
+        var firstSeat: SeatingType?
         var nextPoint = point.applyingOffset(sightlineDirection)
         var candidateCell = seatAt(nextPoint)
 
-        while firstSeat == nil && candidateCell != nil {
+        while firstSeat == nil, candidateCell != nil {
             guard candidateCell == .floor else {
                 firstSeat = candidateCell
                 break
@@ -259,8 +258,7 @@ extension FloorMap {
 
 extension FloorMap {
     func countSeats(of type: SeatingType) -> Int {
-        self
-            .flatMap { $0 }
+        flatMap { $0 }
             .count { $0 == type }
     }
 }

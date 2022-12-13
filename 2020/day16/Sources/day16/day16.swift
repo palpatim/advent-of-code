@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day16 {
+public enum day16 {
     public static func solvePart1(
         _ input: String
     ) -> Int {

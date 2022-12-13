@@ -1,6 +1,6 @@
 //
 //  Node.swift
-//  
+//
 //
 //  Created by Schmelter, Tim on 12/17/21.
 //
@@ -12,9 +12,9 @@ open class Node<Value: Hashable> {
     public private(set) var neighbors: Set<Node<Value>>
 
     public init(_ value: Value) {
-        self.id = UUID()
+        id = UUID()
         self.value = value
-        self.neighbors = []
+        neighbors = []
     }
 
     /// Sets up a bi-directional link between the receiver and `neighbor`.
@@ -25,7 +25,7 @@ open class Node<Value: Hashable> {
 }
 
 extension Node: Equatable {
-    public static func ==(_ lhs: Node, _ rhs: Node) -> Bool {
+    public static func == (_ lhs: Node, _ rhs: Node) -> Bool {
         lhs.id == rhs.id
     }
 }
@@ -38,7 +38,7 @@ extension Node: Hashable {
 
 extension Node: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "\(value): \(neighbors.map({"\($0.value)"}).joined(separator: ","))"
+        "\(value): \(neighbors.map { "\($0.value)" }.joined(separator: ","))"
     }
 }
 

@@ -1,7 +1,7 @@
 import Foundation
 import utils
 
-public struct day17 {
+public enum day17 {
     public static func solvePart1(_ input: String) -> Int {
         let puzzle = parseInput(input)
 
@@ -42,8 +42,7 @@ public struct day17 {
                 let v = Velocity(x: vx, y: vy)
                 if simulate(v: v, puzzle: puzzle) {
                     count += 1
-                } else {
-                }
+                } else {}
             }
         }
 
@@ -91,7 +90,6 @@ public struct day17 {
             targetBottomRight: bottomRight
         )
     }
-
 }
 
 public struct Puzzle {
@@ -109,7 +107,6 @@ public struct Puzzle {
     func intersects(_ coordinate: Coordinate) -> Bool {
         xRange.contains(coordinate.x) && yRange.contains(coordinate.y)
     }
-
 }
 
 public struct Velocity: Equatable {
@@ -120,18 +117,18 @@ public struct Velocity: Equatable {
     }
 }
 
-extension Velocity {
+public extension Velocity {
     /// Applies puzzle's physics rules to `velocity` and returns the new velocity.
     /// - Converges `x` velocity by to 0 by 1
     /// - Reduces `y` velocity by 1
-    public func slowdown() -> Velocity {
+    func slowdown() -> Velocity {
         let newX = x.converging(to: 0, by: 1)
         let newY = y - 1
         return Velocity(x: newX, y: newY)
     }
 
     /// Calculate the distance travelled (sum of series) until the velocity reaches zero
-    public static func distanceToZero(positiveInt n: Int) -> Int {
+    static func distanceToZero(positiveInt n: Int) -> Int {
         guard n >= 0 else {
             fatalError()
         }
@@ -159,7 +156,7 @@ extension Velocity {
     /// `x = (-1 ± √(1² - 4*(-2S)))/2`
     /// `x = (-1 ± √(1 - -8S))/2`
     /// `x = (-1 ± √(1 + 8S))/2`
-    public static func countOfSeries(withSum sum: Int) -> Int {
+    static func countOfSeries(withSum sum: Int) -> Int {
         let term = 1.0 + Double(8 * sum)
         let root = sqrt(term)
         // Ignore the "minus" part of the +/- and just return the first solution
@@ -181,6 +178,5 @@ extension Int {
         default:
             fatalError()
         }
-
     }
 }

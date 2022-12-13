@@ -1,7 +1,7 @@
 import Foundation
 import utils
 
-public struct day18 {
+public enum day18 {
     public static func solve(_ input: String) -> SnailFishNumber {
         let numbers = parseInput(input)
         return numbers[1...].reduce(numbers[0]) { $0 + $1 }
@@ -35,9 +35,9 @@ public struct day18 {
 
 public typealias SnailFishNumber = BinaryTree<Int?>
 
-extension SnailFishNumber {
-    public func copy() -> SnailFishNumber {
-        let puzzleInput = self.description
+public extension SnailFishNumber {
+    func copy() -> SnailFishNumber {
+        let puzzleInput = description
         return SnailFishNumber.fromPuzzleInput(puzzleInput)
     }
 }
@@ -218,7 +218,7 @@ extension SnailFishNumber {
         node.value = nil
     }
 
-    public static func +(
+    public static func + (
         _ lhs: SnailFishNumber,
         _ rhs: SnailFishNumber
     ) -> SnailFishNumber {
@@ -228,9 +228,7 @@ extension SnailFishNumber {
         root.reduce()
         return root
     }
-
 }
-
 
 extension SnailFishNumber {
     var isPairNode: Bool {
@@ -252,7 +250,6 @@ extension SnailFishNumber {
             return ""
         }
     }
-
 }
 
 extension SnailFishNumber: CustomStringConvertible {
@@ -266,7 +263,5 @@ extension SnailFishNumber: CustomStringConvertible {
 }
 
 struct Puzzle {
-    public init(_ input: String) {
-
-    }
+    public init(_: String) {}
 }

@@ -1,7 +1,6 @@
 import Foundation
 
-public struct day10 {
-
+public enum day10 {
     public static func solvePart1(
         _ input: String
     ) -> Int {
@@ -75,7 +74,6 @@ public struct day10 {
                     fatalError("Logic error: Shouldn't have more than 3 children")
                 }
             }
-
         }
 
         return nodes[min]!
@@ -90,7 +88,7 @@ class MemoizingNode<T> {
     private var _pathCount: Int?
     var pathCount: Int {
         if let _pathCount = _pathCount {
-             return _pathCount
+            return _pathCount
         }
 
         if children.isEmpty {
@@ -99,14 +97,14 @@ class MemoizingNode<T> {
         }
 
         _pathCount = children
-                .map { $0.pathCount }
-                .reduce(0, +)
+            .map { $0.pathCount }
+            .reduce(0, +)
         return _pathCount!
     }
 
     public init(_ value: T) {
         self.value = value
-        self.children = []
+        children = []
     }
 }
 

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day07 {
+public enum day07 {
     public enum RuleSet {
         case part1, part2
     }
@@ -53,7 +53,6 @@ public struct day07 {
     private static func triangular(_ n: Int) -> Int {
         (n * (n + 1)) / 2
     }
-
 }
 
 public extension Array where Element == Int {
@@ -83,12 +82,11 @@ public extension Array where Element == Int {
 
     /// Returns a dictionary whose keys are elements of the array, and whose values are the number of times that value appears in the array
     func histogram() -> [Int: Int] {
-        let histogram = self
-            .reduce([Int: Int]()) { (acc, curr) in
-                var new = acc
-                new[curr, default: 0] += 1
-                return new
-            }
+        let histogram = reduce([Int: Int]()) { acc, curr in
+            var new = acc
+            new[curr, default: 0] += 1
+            return new
+        }
         return histogram
     }
 
@@ -109,7 +107,7 @@ public extension Array where Element == Int {
         // Adjust entire range to remove zeros
         let adjustedValues = map { $0 + 1 }
         let product = adjustedValues.reduce(1, *)
-        let nthRoot = pow(Double(product), Double(1/adjustedValues.count))
+        let nthRoot = pow(Double(product), Double(1 / adjustedValues.count))
         let geometricMean = nthRoot - 1
         return Int(geometricMean)
     }

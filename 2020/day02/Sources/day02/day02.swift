@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day02 {
+public enum day02 {
     public static func solvePart1(input: String) -> Int {
         let records = parseInput(input)
         let validRecordCount = records.filter(day02.validatePart1).count
@@ -67,10 +67,10 @@ public struct day02 {
 
         let truthCount = [
             characterAtFirstIndex == requiredCharacter,
-            characterAtSecondIndex == requiredCharacter
+            characterAtSecondIndex == requiredCharacter,
         ]
-            .filter { $0 }
-            .count
+        .filter { $0 }
+        .count
 
         return truthCount == 1
     }

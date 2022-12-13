@@ -1,7 +1,7 @@
 import Foundation
 import XCTest
 
-public struct day07 {
+public enum day07 {
     public static func solvePart1(
         _ input: String,
         queryColor: String
@@ -40,7 +40,6 @@ public struct day07 {
         }
         return bagGraph
     }
-
 }
 
 typealias Bag = Vertex<String>
@@ -61,12 +60,12 @@ public class Edge<T: Hashable> {
     }
 }
 
-extension Edge {
-    public enum EdgeDirection {
+public extension Edge {
+    enum EdgeDirection {
         case incoming, outgoing
     }
 
-    public func displayValue(for direction: EdgeDirection) -> String {
+    func displayValue(for direction: EdgeDirection) -> String {
         switch direction {
         case .incoming:
             return "<--(\(weight))-- \(source)"
@@ -77,7 +76,7 @@ extension Edge {
 }
 
 extension Edge: Equatable {
-    public static func ==(lhs: Edge, rhs: Edge) -> Bool {
+    public static func == (lhs: Edge, rhs: Edge) -> Bool {
         ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
 }
@@ -105,8 +104,8 @@ extension BagGraph: CustomDebugStringConvertible {
     }
 }
 
-extension BagGraph {
-    public struct BagRule {
+public extension BagGraph {
+    struct BagRule {
         let count: Int
         let color: String
 
@@ -206,7 +205,7 @@ public class BagGraph {
             let bag = queue.removeFirst()
             // Brute force solution: We'll insert one bag into the queue for each contained bag. Would be better to keep track of the multipliers
             for edge in bag.outgoingEdges {
-                let newBags = Array<Bag>(
+                let newBags = [Bag](
                     repeating: edge.destination,
                     count: edge.weight
                 )
@@ -216,7 +215,6 @@ public class BagGraph {
         }
         return count
     }
-
 }
 
 /// Note we're including the edges directly onto the Vertex type rather than modeling it as a separate structure. We're also going to cheat and add an `incomingEdges` map to make it easier to traverse
@@ -225,16 +223,16 @@ public class Vertex<T: Hashable> {
     public private(set) var outgoingEdges: Set<Edge<T>>
     public private(set) var incomingEdges: Set<Edge<T>>
     public init(_ color: T) {
-        self.value = color
-        self.outgoingEdges = []
-        self.incomingEdges = []
+        value = color
+        outgoingEdges = []
+        incomingEdges = []
     }
 
     public func addEdge(
         to destination: Vertex<T>,
         weight: Int
     ) {
-        self.outgoingEdges.insert(
+        outgoingEdges.insert(
             Edge(source: self, destination: destination, weight: weight)
         )
         destination.incomingEdges.insert(

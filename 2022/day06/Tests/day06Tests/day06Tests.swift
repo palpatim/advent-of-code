@@ -1,5 +1,5 @@
-import XCTest
 import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testAdditionalShortCount() async throws {
@@ -44,7 +44,6 @@ final class aocTests: XCTestCase {
             Solution.processRawSignal("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", uniqueCount: 14),
             26
         )
-
     }
 
     func testPart1Sample() async throws {
@@ -66,12 +65,11 @@ final class aocTests: XCTestCase {
         let actual = try await Solution.solve("real.txt", uniqueCount: 14)
         XCTAssertEqual(actual, 3513)
     }
-
 }
 
 // MARK: - Solution
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         uniqueCount: Int

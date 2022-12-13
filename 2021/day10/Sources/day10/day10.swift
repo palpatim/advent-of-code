@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day10 {
+public enum day10 {
     public static func solvePart1(_ input: String) -> Int {
         let lines = parseInput(input)
         return scoreCorrupted(lines: lines)
@@ -20,7 +20,7 @@ public struct day10 {
         let score = lines
             .map { Syntax.score($0) }
             .compactMap {
-                guard case .corrupted(let c) = $0 else {
+                guard case let .corrupted(c) = $0 else {
                     return nil
                 }
                 return Syntax.scoreByIllegalCharacter[c]!
@@ -33,8 +33,8 @@ public struct day10 {
     private static func scoreIncomplete(lines: [String]) -> Int {
         let scores = lines
             .map { Syntax.score($0) }
-            .compactMap { (score) -> Int? in
-                guard case .incomplete(let characters) = score else {
+            .compactMap { score -> Int? in
+                guard case let .incomplete(characters) = score else {
                     return nil
                 }
                 return Syntax.scoreIncomplete(characters: characters)
@@ -45,7 +45,7 @@ public struct day10 {
     }
 }
 
-public struct Syntax {
+public enum Syntax {
     public enum Score {
         case valid
         case corrupted(Character)
@@ -56,7 +56,7 @@ public struct Syntax {
         "(": ")",
         "[": "]",
         "{": "}",
-        "<": ">"
+        "<": ">",
     ]
 
     public static let delimiterClosers = Set(delimiterPairsByOpen.values)
@@ -65,14 +65,14 @@ public struct Syntax {
         ")": 3,
         "]": 57,
         "}": 1197,
-        ">": 25137
+        ">": 25137,
     ]
 
     public static let scoreByIncompleteCharacter: [Character: Int] = [
         ")": 1,
         "]": 2,
         "}": 3,
-        ">": 4
+        ">": 4,
     ]
 
     public static func score(_ input: String) -> Score {
@@ -81,7 +81,7 @@ public struct Syntax {
             // Skip non-delimiters
             guard
                 delimiterClosers.contains(c) ||
-                    delimiterPairsByOpen[c] != nil
+                delimiterPairsByOpen[c] != nil
             else {
                 continue
             }
@@ -115,14 +115,13 @@ public struct Syntax {
     }
 }
 
-extension Dictionary where Value: Hashable {
-    public var valueKeyPairs: [Value: Key] {
-        let reversed = self
-            .reduce([Value: Key]()) { (acc, curr) in
-                var new = acc
-                new[curr.value] = curr.key
-                return new
-            }
+public extension Dictionary where Value: Hashable {
+    var valueKeyPairs: [Value: Key] {
+        let reversed = reduce([Value: Key]()) { acc, curr in
+            var new = acc
+            new[curr.value] = curr.key
+            return new
+        }
         return reversed
     }
 }

@@ -1,6 +1,6 @@
 //
 //  AdjacencyList+Dijkstra.swift
-//  
+//
 //
 //  Created by Schmelter, Tim on 12/12/22.
 //
@@ -68,17 +68,16 @@ extension AdjacencyList {
         return nil
     }
 
-
     private func path(
         to destination: Vertex<Element>,
-        in tree: [Vertex<Element> : Visit<Element>]
+        in tree: [Vertex<Element>: Visit<Element>]
     ) -> [Edge<Element>] {
         var currentVertex = destination
         var path = [Edge<Element>]()
 
         while
             let visit = tree[currentVertex],
-            case .edge(let edge) = visit
+            case let .edge(edge) = visit
         {
             path = [edge] + path
             currentVertex = edge.source
@@ -88,7 +87,7 @@ extension AdjacencyList {
 
     private func distance(
         to destination: Vertex<Element>,
-        in tree: [Vertex<Element> : Visit<Element>]
+        in tree: [Vertex<Element>: Visit<Element>]
     ) -> Double {
         let path = path(to: destination, in: tree)
         return path.totalWeight

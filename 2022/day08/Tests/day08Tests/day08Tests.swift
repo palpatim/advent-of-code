@@ -1,5 +1,5 @@
-import XCTest
 import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
@@ -19,9 +19,8 @@ final class aocTests: XCTestCase {
 
     func testPart2Real() async throws {
         let actual = try await Solution.solve("real.txt", strategy: .scenicScore)
-        XCTAssertEqual(actual, 301392)
+        XCTAssertEqual(actual, 301_392)
     }
-
 }
 
 // MARK: - Solution
@@ -31,7 +30,7 @@ enum Strategy {
     case scenicScore
 }
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         strategy: Strategy
@@ -153,11 +152,8 @@ class Solution {
 
         return visibleCoordinates
     }
-
 }
 
 // MARK: - Extensions
 
-extension Grid where Value: Comparable {
-
-}
+extension Grid where Value: Comparable {}

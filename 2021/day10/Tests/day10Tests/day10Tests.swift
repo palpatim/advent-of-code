@@ -1,5 +1,5 @@
-import XCTest
 @testable import day10
+import XCTest
 
 final class day10Tests: XCTestCase {
     func testPart1Sample() throws {
@@ -10,22 +10,21 @@ final class day10Tests: XCTestCase {
 
     func testPart1Real() throws {
         let actual = day10.solvePart1(realInput)
-        let expected = 388713
+        let expected = 388_713
         XCTAssertEqual(actual, expected)
     }
 
     func testPart2Sample() throws {
         let actual = day10.solvePart2(sampleInput)
-        let expected = 288957
+        let expected = 288_957
         XCTAssertEqual(actual, expected)
     }
 
     func testPart2Real() throws {
         let actual = day10.solvePart2(realInput)
-        let expected = 3539961434
+        let expected = 3_539_961_434
         XCTAssertEqual(actual, expected)
     }
-
 }
 
 // MARK: - Input

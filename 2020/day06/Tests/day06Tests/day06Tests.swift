@@ -1,5 +1,5 @@
-import XCTest
 @testable import day06
+import XCTest
 
 final class day06Tests: XCTestCase {
     func testPart1Sample() {
@@ -21,7 +21,6 @@ final class day06Tests: XCTestCase {
         let actual = day06.solvePart2(realInput)
         XCTAssertEqual(3493, actual)
     }
-
 }
 
 // MARK: - Inputs

@@ -1,5 +1,5 @@
-import XCTest
 import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
@@ -9,19 +9,18 @@ final class aocTests: XCTestCase {
 
     func testPart1Real() async throws {
         let actual = try await Solution.solve("real.txt", strategy: .notExceedingThreshold(100_000))
-        XCTAssertEqual(actual, 1477771)
+        XCTAssertEqual(actual, 1_477_771)
     }
 
     func testPart2Sample() async throws {
         let actual = try await Solution.solve("sample.txt", strategy: .applyingUpdateSize(30_000_000))
-        XCTAssertEqual(actual, 24933642)
+        XCTAssertEqual(actual, 24_933_642)
     }
 
     func testPart2Real() async throws {
         let actual = try await Solution.solve("real.txt", strategy: .applyingUpdateSize(30_000_000))
-        XCTAssertEqual(actual, 3579501)
+        XCTAssertEqual(actual, 3_579_501)
     }
-
 }
 
 // MARK: - Solution
@@ -31,7 +30,7 @@ enum Strategy {
     case applyingUpdateSize(Int)
 }
 
-class Solution {
+enum Solution {
     static let fileSystemSize = 70_000_000
 
     static func solve(
@@ -51,7 +50,7 @@ class Solution {
                 switch command {
                 case .ls:
                     break
-                case .cd(let argument):
+                case let .cd(argument):
                     switch argument {
                     case "/":
                         currentNode = currentNode?.root ?? DirectoryNode(.directory, name: "/")
@@ -78,13 +77,13 @@ class Solution {
         let root = currentNode.root
 
         switch strategy {
-        case .notExceedingThreshold(let sizeThreshold):
+        case let .notExceedingThreshold(sizeThreshold):
             return root
                 .childDirectoriesRecursive
                 .map { $0.size }
                 .filter { $0 <= sizeThreshold }
                 .reduce(0, +)
-        case .applyingUpdateSize(let updateSize):
+        case let .applyingUpdateSize(updateSize):
             let availableSpace = fileSystemSize - root.size
             let spaceToFree = updateSize - availableSpace
             return root
@@ -93,9 +92,7 @@ class Solution {
                 .filter { $0 >= spaceToFree }
                 .min()!
         }
-
     }
-
 }
 
 // MARK: - Structures
@@ -143,7 +140,7 @@ class DirectoryNode {
             return _size
         }
         switch nodeType {
-        case .file(let size):
+        case let .file(size):
             _size = size
             return size
         case .directory:
@@ -170,8 +167,8 @@ class DirectoryNode {
     init(_ nodeType: NodeType, name: String) {
         self.nodeType = nodeType
         self.name = name
-        self.parent = nil
-        self.children = []
+        parent = nil
+        children = []
     }
 
     func child(named name: String) -> DirectoryNode? {

@@ -1,7 +1,7 @@
 import Foundation
 import utils
 
-public struct day15 {
+public enum day15 {
     public static func solve(
         _ input: String,
         tileCount: Int
@@ -59,7 +59,6 @@ public struct day15 {
 
         return grid
     }
-
 }
 
 private extension Int {
@@ -73,12 +72,11 @@ public struct PriorityHolder: Hashable {
     let tentativeDistance: Int
 }
 
-extension Node {
-    public func shortestDistance(
+public extension Node {
+    func shortestDistance(
         to target: Node<Value>,
         considering allNodes: [Node<Value>]
     ) -> Value where Value == Int {
-
         var visited = Set<Node<Value>>()
 
         var distanceFromStart = allNodes
@@ -117,5 +115,4 @@ extension Node {
 
         return distanceFromStart[target]!
     }
-
 }

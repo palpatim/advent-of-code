@@ -1,8 +1,7 @@
-import XCTest
 @testable import day16
+import XCTest
 
 final class day16Tests: XCTestCase {
-
     func testParsing() {
         let hexString = "D2FE28"
         let packet = BITSPacket.from(hexString: hexString)
@@ -89,9 +88,8 @@ final class day16Tests: XCTestCase {
 
     func testPart2Real() {
         let result = day16.solve(realInput)
-        XCTAssertEqual(result.evaluate(), 819324480368)
+        XCTAssertEqual(result.evaluate(), 819_324_480_368)
     }
-
 }
 
 // MARK: - Input

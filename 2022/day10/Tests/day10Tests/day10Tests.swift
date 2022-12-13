@@ -1,5 +1,5 @@
-import XCTest
 import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
@@ -42,10 +42,10 @@ final class aocTests: XCTestCase {
         █..█.███..█....█..█.█..█.█..█..███.█....
         """)
     }
-
 }
 
 // MARK: - Solution
+
 protocol Strategy {}
 struct SignalStrengthStrategy: Strategy {}
 
@@ -61,7 +61,7 @@ extension Strategy where Self == RenderStrategy {
     static var render: Strategy { RenderStrategy() }
 }
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         strategy: Strategy

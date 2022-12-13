@@ -1,7 +1,6 @@
 import Foundation
 
-public struct day14 {
-
+public enum day14 {
     public static func solve(_ input: String, count: Int) -> Int {
         let puzzle = parseInput(input)
         let result = iterate(puzzle: puzzle, count: count)
@@ -56,9 +55,9 @@ public struct day14 {
         derivedFrom string: String
     ) -> [Character: Int] {
         var counts = pairs
-           .reduce(into: [Character: Int]()) { acc, curr in
-               acc[curr.key.last!, default: 0] += curr.value
-           }
+            .reduce(into: [Character: Int]()) { acc, curr in
+                acc[curr.key.last!, default: 0] += curr.value
+            }
         let firstChar = string.first!
         counts[firstChar, default: 0] += 1
         return counts
@@ -89,7 +88,6 @@ public struct day14 {
 
         return (minCount: minCount, maxCount: maxCount)
     }
-
 }
 
 struct Puzzle {
@@ -97,13 +95,11 @@ struct Puzzle {
     let pairRules: [String: Character]
 }
 
-extension String {
-    public func characterCount() -> [Character: Int] {
-        let result = self
-            .reduce(into: [Character: Int]()) { acc, curr in
-                acc[curr, default: 0] += 1
-            }
+public extension String {
+    func characterCount() -> [Character: Int] {
+        let result = reduce(into: [Character: Int]()) { acc, curr in
+            acc[curr, default: 0] += 1
+        }
         return result
     }
-
 }

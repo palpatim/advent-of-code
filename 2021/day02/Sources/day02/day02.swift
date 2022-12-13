@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day02 {
+public enum day02 {
     public static func solvePart1(_ input: String) -> Int {
         let commands = parseInput(input)
         let position = executePart1(commands: commands)
@@ -63,22 +63,22 @@ public struct Position {
 
     mutating func applyCommandPart1(_ command: Command) {
         switch command {
-        case .down(let value):
+        case let .down(value):
             depth += value
-        case .up(let value):
+        case let .up(value):
             depth -= value
-        case .forward(let value):
+        case let .forward(value):
             horizontal += value
         }
     }
 
     mutating func applyCommandPart2(_ command: Command) {
         switch command {
-        case .down(let value):
+        case let .down(value):
             aim += value
-        case .up(let value):
+        case let .up(value):
             aim -= value
-        case .forward(let value):
+        case let .forward(value):
             horizontal += value
             depth += aim * value
         }

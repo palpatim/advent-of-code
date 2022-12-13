@@ -1,6 +1,6 @@
-import XCTest
-import utils
 import RegexBuilder
+import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
@@ -22,12 +22,11 @@ final class aocTests: XCTestCase {
         let actual = try await Solution.solve("real.txt", strategy: .multiple)
         XCTAssertEqual(actual, "BRZGFVBTJ")
     }
-
 }
 
 // MARK: - Solution
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         strategy: MoveStrategy
@@ -161,5 +160,4 @@ extension Array {
         self = Array(prefix(self.count - count))
         return suffix
     }
-
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day13 {
+public enum day13 {
     public static func solvePart1(_ input: String) -> Int {
         let problem = parsePart1Input(input)
         let solution = findEarliestBus(problem: problem)
@@ -113,7 +113,6 @@ struct Part1Solution {
     let busId: BusID
     let waitTime: Int
 }
-
 
 func chineseRemainder(n: [Int], a: [Int]) -> Int {
     /*

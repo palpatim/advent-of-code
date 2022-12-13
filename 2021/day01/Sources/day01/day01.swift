@@ -1,7 +1,7 @@
 import Foundation
 import OpenGL
 
-public struct day01 {
+public enum day01 {
     public static func solve(
         _ input: String,
         windowSize: Int = 1

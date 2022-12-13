@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day05 {
+public enum day05 {
     public static func solve(_ input: String, consideringDiagonals: Bool) -> Int {
         let ventMap = parseInput(input, consideringDiagonals: consideringDiagonals)
         let intersections = ventMap.countIntersections()
@@ -32,11 +32,11 @@ public class Segment {
     public init(p1: Coordinate, p2: Coordinate) {
         self.p1 = p1
         self.p2 = p2
-        self.coords = Segment.getAllCoordinates(
+        coords = Segment.getAllCoordinates(
             from: p1,
             to: p2
         )
-        self.direction = p1.direction(to: p2)
+        direction = p1.direction(to: p2)
     }
 
     private static func getAllCoordinates(
@@ -90,8 +90,8 @@ public struct Coordinate: Hashable {
 
     public init(csv: String) {
         let coords = csv.components(separatedBy: ",").map { Int($0)! }
-        self.x = coords[0]
-        self.y = coords[1]
+        x = coords[0]
+        y = coords[1]
     }
 
     public func direction(to other: Coordinate) -> Direction {
@@ -135,7 +135,7 @@ public class VentMap {
     public init(segments: [Segment], consideringDiagonals: Bool) {
         let includedSegments = segments.filter { consideringDiagonals || !$0.direction.isDiagonal }
         self.segments = includedSegments
-        self.segmentsByCoord = VentMap.groupSegmentsByCoord(segments: includedSegments)
+        segmentsByCoord = VentMap.groupSegmentsByCoord(segments: includedSegments)
     }
 
     public func countIntersections() -> Int {

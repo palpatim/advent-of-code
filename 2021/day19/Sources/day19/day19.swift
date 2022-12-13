@@ -1,8 +1,8 @@
 import Foundation
 import utils
 
-public struct day19 {
-    public static func solve(_ input: String) -> Int {
+public enum day19 {
+    public static func solve(_: String) -> Int {
         return 0
     }
 

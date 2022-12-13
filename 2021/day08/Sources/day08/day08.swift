@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day08 {
+public enum day08 {
     public static func solve(
         _ input: String,
         countingNumbersIn targets: Set<Int>
@@ -163,11 +163,10 @@ public struct Sample {
         }
 
         digitsBySample = samplesByDigit
-            .reduce([String: Int]()) { (acc, curr) in
+            .reduce([String: Int]()) { acc, curr in
                 var new = acc
                 new[curr.value] = curr.key
                 return new
             }
     }
-
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day14 {
+public enum day14 {
     public static func solve(
         _ input: String,
         ruleSet: RuleSet
@@ -24,9 +24,9 @@ public struct day14 {
         var mask = Bitmask()
         for command in program {
             switch command {
-            case .mask(let maskString):
+            case let .mask(maskString):
                 mask = parseMask(maskString)
-            case .mem(let address, let value):
+            case let .mem(address, value):
                 switch ruleSet {
                 case .part1:
                     let adjustedValue = applyValueMask(mask, to: value)
@@ -98,7 +98,7 @@ public struct day14 {
         var masks = [Bitmask]()
         masks.append(contentsOf: [
             [positions[0]: .set],
-            [positions[0]: .unset]
+            [positions[0]: .unset],
         ])
 
         guard positions.count > 1 else {

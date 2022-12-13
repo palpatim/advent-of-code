@@ -1,9 +1,8 @@
-public struct day16 {
+public enum day16 {
     public static func solve(_ input: String) -> BITSPacket {
         let packet = BITSPacket.from(hexString: input)
         return packet
     }
-
 }
 
 public class BITSPacket {
@@ -77,13 +76,11 @@ public class BITSPacket {
             let values = children.map { $0.evaluate() }
             return values[0] == values[1] ? 1 : 0
         }
-
     }
-
 }
 
-extension BITSPacket {
-    public struct Parser {
+public extension BITSPacket {
+    struct Parser {
         private enum State {
             case start
             case parsingVersion
@@ -110,9 +107,9 @@ extension BITSPacket {
 
         public init(bitString: String) {
             self.bitString = bitString
-            self.currentIndex = bitString.startIndex
-            self.packets = []
-            self.stack = [.start]
+            currentIndex = bitString.startIndex
+            packets = []
+            stack = [.start]
         }
 
         public mutating func parse() -> BITSPacket {
@@ -125,7 +122,7 @@ extension BITSPacket {
                     stack.push(.parsingVersion)
 
                 case .parsingLengthBasedContainer, .parsingCountBasedContainer:
-                    break;
+                    break
 
                 case .parsingVersion:
                     let version = parseVersion()
@@ -175,7 +172,7 @@ extension BITSPacket {
                         break
                     }
                     switch currentState {
-                    case .parsingLengthBasedContainer(let endIndex):
+                    case let .parsingLengthBasedContainer(endIndex):
                         let packet = packets.pop()
                         if let parentPacket = packets.last {
                             parentPacket.children.append(packet)
@@ -190,7 +187,7 @@ extension BITSPacket {
                             stack.push(.start)
                         }
 
-                    case .parsingCountBasedContainer(let remainingCount):
+                    case let .parsingCountBasedContainer(remainingCount):
                         _ = stack.pop()
 
                         let packet = packets.pop()
@@ -210,7 +207,6 @@ extension BITSPacket {
                     default:
                         break
                     }
-
                 }
             }
 
@@ -297,7 +293,6 @@ extension BITSPacket {
             return bitString
         }
     }
-
 }
 
 // Convenience stack-like aliases
@@ -318,6 +313,6 @@ private extension Array {
 // https://stackoverflow.com/a/52447981/603369
 extension RangeReplaceableCollection where Self: StringProtocol {
     func paddingToLeft(upTo length: Int, using element: Element = " ") -> SubSequence {
-        return repeatElement(element, count: Swift.max(0, length-count)) + suffix(Swift.max(count, count-length))
+        return repeatElement(element, count: Swift.max(0, length - count)) + suffix(Swift.max(count, count - length))
     }
 }

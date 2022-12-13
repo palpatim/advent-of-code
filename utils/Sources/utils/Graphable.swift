@@ -1,6 +1,6 @@
 //
 //  Graphable.swift
-//  
+//
 //
 //  Created by Schmelter, Tim on 12/12/22.
 //

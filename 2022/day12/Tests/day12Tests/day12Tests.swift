@@ -1,5 +1,5 @@
-import XCTest
 import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
@@ -21,7 +21,6 @@ final class aocTests: XCTestCase {
         let actual = try await Solution.solve("real.txt", condition: .backwardToUnknownStartingPoint)
         XCTAssertEqual(actual, 375)
     }
-
 }
 
 // MARK: - Solution
@@ -31,7 +30,7 @@ enum Condition {
     case backwardToUnknownStartingPoint
 }
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         condition: Condition

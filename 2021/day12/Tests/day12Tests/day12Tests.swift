@@ -1,5 +1,5 @@
-import XCTest
 @testable import day12
+import XCTest
 
 final class day12Tests: XCTestCase {
     func testPart1Samples() {
@@ -49,7 +49,6 @@ final class day12Tests: XCTestCase {
             93858
         )
     }
-
 }
 
 // MARK: - Input

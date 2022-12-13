@@ -1,8 +1,7 @@
-import XCTest
 @testable import day05
+import XCTest
 
 final class day05Tests: XCTestCase {
-
     func testSeatId() {
         var pass: BoardingPass
 

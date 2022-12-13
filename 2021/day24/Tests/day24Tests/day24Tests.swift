@@ -1,10 +1,8 @@
-import XCTest
 @testable import day24
+import XCTest
 
 final class day24Tests: XCTestCase {
-    func testExample() {
-
-    }
+    func testExample() {}
 }
 
 // MARK: - Input

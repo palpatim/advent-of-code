@@ -1,9 +1,8 @@
-import XCTest
 @testable import day18
 import utils
+import XCTest
 
 final class day18Tests: XCTestCase {
-
     func testCopy() {
         var input: String!
         var original: SnailFishNumber!
@@ -18,7 +17,6 @@ final class day18Tests: XCTestCase {
         original = SnailFishNumber.fromPuzzleInput(input)
         expected = SnailFishNumber.fromPuzzleInput(input)
         XCTAssertEqual(original.copy(), expected)
-
     }
 
     func testParsing() {
@@ -55,7 +53,6 @@ final class day18Tests: XCTestCase {
         expected = "1,8,8,7,3,1,9"
         tree = SnailFishNumber.fromPuzzleInput(input)
         XCTAssertEqual(traverse(tree), expected)
-
 
         XCTAssertEqual(tree.left?.left?.value, 1)
         XCTAssertEqual(tree.left?.right?.value, 8)
@@ -219,7 +216,6 @@ final class day18Tests: XCTestCase {
         actual = lhs + rhs
         expected = SnailFishNumber.fromPuzzleInput("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]")
         XCTAssertEqual(actual, expected)
-
     }
 
     func testSamples() {
@@ -308,7 +304,6 @@ final class day18Tests: XCTestCase {
         let expected = 4837
         XCTAssertEqual(actual, expected)
     }
-
 }
 
 // MARK: - Inputs

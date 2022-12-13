@@ -1,4 +1,4 @@
-public struct day03 {
+public enum day03 {
     public static func solvePart1(_ input: String) -> Int {
         let terrainMap = parseInput(input)
         let pattern = TraversalPattern(right: 3, down: 1)
@@ -13,10 +13,10 @@ public struct day03 {
             TraversalPattern(right: 3, down: 1),
             TraversalPattern(right: 5, down: 1),
             TraversalPattern(right: 7, down: 1),
-            TraversalPattern(right: 1, down: 2)
+            TraversalPattern(right: 1, down: 2),
         ]
-            .map { traverseAndCountObstacles(terrainMap, pattern: $0) }
-            .reduce(1, *)
+        .map { traverseAndCountObstacles(terrainMap, pattern: $0) }
+        .reduce(1, *)
         return product
     }
 

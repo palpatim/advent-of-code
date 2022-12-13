@@ -1,6 +1,6 @@
 //
 //  Direction.swift
-//  
+//
 //
 //  Created by Schmelter, Tim on 12/17/21.
 //
@@ -89,7 +89,6 @@ public enum Direction: CaseIterable {
         case .se: return Range.range(of: increment, centeredOn: Direction.se.radians)
         }
     }
-
 }
 
-extension Direction: Hashable { }
+extension Direction: Hashable {}

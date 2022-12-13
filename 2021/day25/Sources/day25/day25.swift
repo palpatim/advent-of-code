@@ -1,9 +1,10 @@
+import CloudKit
 import Foundation
 import utils
-import CloudKit
 
 extension Grid: CustomDebugStringConvertible
-where Value == Direction? {
+    where Value == Direction?
+{
     public var debugDescription: String {
         let rows = cellsInOrder
             .map { r in r.map { c in c.debugDescription }.joined() }
@@ -26,7 +27,7 @@ extension Grid.Cell: CustomDebugStringConvertible where Value == Direction? {
     }
 }
 
-public struct day25 {
+public enum day25 {
     public static func solve(_ input: String) -> Int {
         var puzzle = parseInput(input)
         var count = 0
@@ -63,13 +64,13 @@ extension Direction {
 }
 
 extension Grid: Equatable where Value: Equatable {
-    public static func ==(_ lhs: Grid, _ rhs: Grid) -> Bool {
+    public static func == (_ lhs: Grid, _ rhs: Grid) -> Bool {
         return lhs.cells == rhs.cells
     }
 }
 
-extension Grid where Value == Direction? {
-    public mutating func willTravel(cellAt coordinate: Coordinate) -> Bool {
+public extension Grid where Value == Direction? {
+    mutating func willTravel(cellAt coordinate: Coordinate) -> Bool {
         guard
             let currentDirection = cells[coordinate],
             currentDirection != nil,
@@ -82,7 +83,7 @@ extension Grid where Value == Direction? {
         return true
     }
 
-    public mutating func travel(cellAt coordinate: Coordinate) {
+    mutating func travel(cellAt coordinate: Coordinate) {
         guard
             let optionalDirection = cells[coordinate],
             let direction = optionalDirection,
@@ -98,7 +99,7 @@ extension Grid where Value == Direction? {
         setValue(for: nextCoordinate, to: direction)
     }
 
-    public func nextCoordinate(
+    func nextCoordinate(
         afterCellAt coordinate: Coordinate
     ) -> Coordinate? {
         guard
@@ -129,13 +130,12 @@ extension Grid where Value == Direction? {
 
         return newCoord
     }
-
 }
 
 public struct Puzzle {
     var grid: Grid<Direction?>
     public init(_ rows: [[Direction?]]) throws {
-        self.grid = try Grid(rows: rows)
+        grid = try Grid(rows: rows)
     }
 
     public mutating func evolve(_ steps: Int) {
@@ -157,12 +157,11 @@ public struct Puzzle {
             .filter { grid.willTravel(cellAt: $0) }
 
         travellers.forEach { grid.travel(cellAt: $0) }
-
     }
 }
 
 extension Coordinate: Comparable {
-    public static func <(_ lhs: Coordinate, _ rhs: Coordinate) -> Bool {
+    public static func < (_ lhs: Coordinate, _ rhs: Coordinate) -> Bool {
         guard lhs.y != rhs.y else {
             return lhs.x < rhs.x
         }

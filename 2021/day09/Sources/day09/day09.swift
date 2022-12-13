@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day09 {
+public enum day09 {
     public static func solvePart1(_ input: String) -> Int {
         let heightMap = parseInput(input)
         let totalRiskLevel = heightMap
@@ -46,14 +46,14 @@ public class FloorTile {
     }
 
     public init(_ height: Int) {
-        self.id = UUID()
+        id = UUID()
         self.height = height
-        self.neighbors = []
+        neighbors = []
     }
 }
 
 extension FloorTile: Equatable {
-    public static func ==(_ lhs: FloorTile, _ rhs: FloorTile) -> Bool {
+    public static func == (_ lhs: FloorTile, _ rhs: FloorTile) -> Bool {
         return lhs.id == rhs.id
     }
 }
@@ -92,7 +92,7 @@ public class HeightMap {
     let basins: [Set<FloorTile>]
 
     public init(rows: [[FloorTile]]) {
-        self.gridSize = (height: rows.count, width: rows[0].count)
+        gridSize = (height: rows.count, width: rows[0].count)
 
         // We could do this in a single pass, but it's easier to read as two passes,
         // one to populate the coordinate map, one to link up the neighbors
@@ -150,7 +150,6 @@ public class HeightMap {
 
         self.basins = basins
     }
-
 }
 
 private extension String.Element {

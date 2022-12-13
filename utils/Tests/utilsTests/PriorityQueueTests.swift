@@ -1,5 +1,5 @@
-import XCTest
 @testable import utils
+import XCTest
 
 final class PriorityQueueTests: XCTestCase {
     func testPriorityQueue() {
@@ -13,5 +13,4 @@ final class PriorityQueueTests: XCTestCase {
 
         XCTAssertEqual(result, [1, 2, 3, 3, 4, 5])
     }
-
 }

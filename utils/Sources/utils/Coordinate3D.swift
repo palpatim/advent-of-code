@@ -1,6 +1,6 @@
 //
 //  Coordinate3D.swift
-//  
+//
 //
 //  Created by Schmelter, Tim on 12/9/22.
 //
@@ -18,11 +18,10 @@ public struct Coordinate3D: Hashable {
 
     public init(stringValue: String) {
         let components = stringValue.components(separatedBy: ",")
-        self.x = Int(components[0])!
-        self.y = Int(components[1])!
-        self.z = Int(components[2])!
+        x = Int(components[0])!
+        y = Int(components[1])!
+        z = Int(components[2])!
     }
-
 }
 
 extension Coordinate3D: CustomDebugStringConvertible {

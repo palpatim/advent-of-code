@@ -1,5 +1,5 @@
-import XCTest
 @testable import day07
+import XCTest
 
 final class day07Tests: XCTestCase {
     let queryColor = "shiny gold"
@@ -27,7 +27,6 @@ final class day07Tests: XCTestCase {
         let expected = 58175
         XCTAssertEqual(actual, expected)
     }
-
 }
 
 // MARK: - Input

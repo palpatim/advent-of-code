@@ -1,6 +1,6 @@
 //
 //  Edge.swift
-//  
+//
 //
 //  Created by Schmelter, Tim on 12/12/22.
 //
@@ -30,6 +30,6 @@ extension Edge: CustomDebugStringConvertible {
     }
 }
 
-extension Edge: Equatable where Value: Equatable { }
+extension Edge: Equatable where Value: Equatable {}
 
-extension Edge: Hashable where Value: Hashable { }
+extension Edge: Hashable where Value: Hashable {}

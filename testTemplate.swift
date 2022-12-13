@@ -1,5 +1,5 @@
-import XCTest
 import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
@@ -21,12 +21,11 @@ final class aocTests: XCTestCase {
         let actual = try await Solution.solve("real.txt")
         XCTAssertEqual(actual, -1)
     }
-
 }
 
 // MARK: - Solution
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String
     ) async throws -> Int {
@@ -38,12 +37,10 @@ class Solution {
             guard !line.isEmpty else {
                 continue
             }
-
         }
 
         return Int.max
     }
-
 }
 
 // MARK: - Structures

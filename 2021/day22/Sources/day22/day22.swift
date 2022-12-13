@@ -1,7 +1,7 @@
 import Foundation
 import utils
 
-public struct day22 {
+public enum day22 {
     public static func solve(_ input: String, shouldClamp: Bool = true) -> Int {
         let commands = parseInput(input, shouldClamp: shouldClamp)
         let activated = execute(bootCommands: commands)
@@ -28,7 +28,6 @@ public struct day22 {
 
         return activated
     }
-
 }
 
 public struct Command {
@@ -69,8 +68,8 @@ public struct Command {
         if let clampRange = clampRange {
             guard
                 xRange.overlaps(clampRange),
-                    yRange.overlaps(clampRange),
-                    zRange.overlaps(clampRange)
+                yRange.overlaps(clampRange),
+                zRange.overlaps(clampRange)
             else {
                 return nil
             }

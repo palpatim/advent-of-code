@@ -1,6 +1,4 @@
-import XCTest
 @testable import utils
+import XCTest
 
-final class NodeTests: XCTestCase {
-    
-}
+final class NodeTests: XCTestCase {}

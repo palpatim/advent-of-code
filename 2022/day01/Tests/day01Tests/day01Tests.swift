@@ -1,6 +1,6 @@
-import XCTest
-import utils
 @testable import day01
+import utils
+import XCTest
 
 final class day01Tests: XCTestCase {
     func testPart1Sample() async throws {
@@ -20,14 +20,13 @@ final class day01Tests: XCTestCase {
 
     func testPart2Real() async throws {
         let actual = try await Solution.solve("part2.real.txt", countingTopN: 3)
-        XCTAssertEqual(actual, 212836)
+        XCTAssertEqual(actual, 212_836)
     }
-
 }
 
 // MARK: - Solution
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         countingTopN n: Int = 1
@@ -62,16 +61,16 @@ class Solution {
         }
         return total
     }
-
 }
 
 // MARK: - Structures
+
 struct CalorieCarrier {
     var calorieTotal = 0
     var items = [Int]()
     init(items: [Int] = []) {
         self.items = items
-        self.calorieTotal = items.reduce(0, +)
+        calorieTotal = items.reduce(0, +)
     }
 
     mutating func append(_ item: Int) {
@@ -80,7 +79,7 @@ struct CalorieCarrier {
     }
 }
 
-extension CalorieCarrier: Hashable { }
+extension CalorieCarrier: Hashable {}
 
 // MARK: - Errors
 

@@ -1,12 +1,11 @@
-import XCTest
 @testable import utils
+import XCTest
 
 final class GridTests: XCTestCase {
-
     func testInconsistentSize() {
         let rows = [
-            [0,1,2],
-            [3,4]
+            [0, 1, 2],
+            [3, 4],
         ]
         XCTAssertThrowsError(try Grid(rows: rows)) {
             guard case Grid<Int>.GridError.inconsistentSize = $0 else {
@@ -33,5 +32,4 @@ final class GridTests: XCTestCase {
             }
         }
     }
-
 }

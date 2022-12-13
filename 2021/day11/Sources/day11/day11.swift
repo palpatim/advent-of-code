@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day11 {
+public enum day11 {
     public static func solvePart1(_ input: String, steps: Int) -> Int {
         let octopusMap = parseInput(input)
         let flashes = octopusMap.evolve(steps)
@@ -39,9 +39,9 @@ public class Octopus {
     }
 
     public init(_ energyLevel: Int) {
-        self.id = UUID()
+        id = UUID()
         self.energyLevel = energyLevel
-        self.neighbors = []
+        neighbors = []
     }
 
     /// Increment the energy level of all neighbors. Return a set of all neighbors who now exceed the flashThreshold because of this operation. In other words, if neighbor `n` exceeded the threshold prior to being incremented by this operation, they would *not* be included in the returned set
@@ -58,7 +58,7 @@ public class Octopus {
 }
 
 extension Octopus: Equatable {
-    public static func ==(_ lhs: Octopus, _ rhs: Octopus) -> Bool {
+    public static func == (_ lhs: Octopus, _ rhs: Octopus) -> Bool {
         return lhs.id == rhs.id
     }
 }
@@ -106,7 +106,7 @@ public class OctopusMap {
     }
 
     public init(rows: [[Octopus]]) {
-        self.gridSize = (height: rows.count, width: rows[0].count)
+        gridSize = (height: rows.count, width: rows[0].count)
 
         // We could do this in a single pass, but it's easier to read as two passes,
         // one to populate the coordinate map, one to link up the neighbors
@@ -172,9 +172,7 @@ public class OctopusMap {
             let unseenFlashes = newFlashes.filter { !hasFlashed.contains($0) }
             stack.append(contentsOf: unseenFlashes)
         }
-
     }
-
 }
 
 private extension String.Element {

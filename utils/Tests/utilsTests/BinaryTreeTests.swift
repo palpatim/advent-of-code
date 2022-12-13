@@ -1,8 +1,7 @@
-import XCTest
 import utils
+import XCTest
 
 class BinaryTreeTests: XCTestCase {
-
     func testConstructor() {
         let tree = BinaryTree(1)
         XCTAssertEqual(tree.value, 1)
@@ -218,5 +217,4 @@ class BinaryTreeTests: XCTestCase {
         XCTAssertEqual(tree.height, 2)
         XCTAssertEqual(tree.left?.left?.height, 0)
     }
-
 }

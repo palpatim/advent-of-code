@@ -1,7 +1,6 @@
 import Foundation
 
-public struct day06 {
-
+public enum day06 {
     public static func solvePart1(_ input: String) -> Int {
         let groups = parseInput(input)
         let sum = groups
@@ -49,7 +48,7 @@ public struct day06 {
 
     private static func union<Element>(_ sets: [Set<Element>]) -> Set<Element> {
         let union = sets
-            .reduce(Set(), { $0.union($1) } )
+            .reduce(Set()) { $0.union($1) }
         return union
     }
 }

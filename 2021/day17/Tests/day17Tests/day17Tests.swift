@@ -1,6 +1,6 @@
-import XCTest
 @testable import day17
 import utils
+import XCTest
 
 final class day17Tests: XCTestCase {
     func testConverge() {
@@ -73,7 +73,6 @@ final class day17Tests: XCTestCase {
             Velocity.countOfSeries(withSum: 36),
             8
         )
-
     }
 
     func testPart1Sample() {
@@ -95,7 +94,6 @@ final class day17Tests: XCTestCase {
         let result = day17.solvePart2(realInput)
         XCTAssertEqual(result, 3202)
     }
-
 }
 
 // MARK: - Inputs

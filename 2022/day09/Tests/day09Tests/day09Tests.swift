@@ -1,5 +1,5 @@
-import XCTest
 import utils
+import XCTest
 
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
@@ -21,12 +21,11 @@ final class aocTests: XCTestCase {
         let actual = try await Solution.solve("real.txt", ropeLength: 10)
         XCTAssertEqual(actual, 2717)
     }
-
 }
 
 // MARK: - Solution
 
-class Solution {
+enum Solution {
     static func solve(
         _ fileName: String,
         ropeLength: Int
@@ -75,7 +74,6 @@ class Solution {
 
         return tailVisited.count
     }
-
 }
 
 // MARK: - Extensions

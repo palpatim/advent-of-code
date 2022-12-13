@@ -1,5 +1,5 @@
-import XCTest
 @testable import day04
+import XCTest
 
 final class day04Tests: XCTestCase {
     func testPart1Sample() throws {
@@ -37,7 +37,6 @@ final class day04Tests: XCTestCase {
         let expected = 153
         XCTAssertEqual(actual, expected)
     }
-
 }
 
 // MARK: - Inputs

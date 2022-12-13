@@ -1,6 +1,6 @@
 //
 //  AdjacencyList.swift
-//  
+//
 //
 //  Created by Schmelter, Tim on 12/12/22.
 //
@@ -97,5 +97,4 @@ extension AdjacencyList: Graphable {
         addDirectedEdge(from: source, to: destination, weight: weight)
         addDirectedEdge(from: destination, to: source, weight: weight)
     }
-
 }

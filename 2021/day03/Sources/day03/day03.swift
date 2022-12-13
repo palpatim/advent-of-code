@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day03 {
+public enum day03 {
     public enum RuleSet {
         case part1, part2
     }
@@ -96,7 +96,6 @@ public struct day03 {
         }
         fatalError("No solution found")
     }
-
 }
 
 public struct PuzzleInput {
@@ -139,6 +138,6 @@ public struct PuzzleInput {
 // https://stackoverflow.com/a/52447981/603369
 extension RangeReplaceableCollection where Self: StringProtocol {
     func paddingToLeft(upTo length: Int, using element: Element = " ") -> SubSequence {
-        return repeatElement(element, count: Swift.max(0, length-count)) + suffix(Swift.max(count, count-length))
+        return repeatElement(element, count: Swift.max(0, length - count)) + suffix(Swift.max(count, count - length))
     }
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct day04 {
+public enum day04 {
     public static func solve(
         _ input: String,
         evaluatingAgainst policy: ValidationPolicy
@@ -33,7 +33,6 @@ public struct day04 {
         builders.append(currentBuilder)
         return builders
     }
-
 }
 
 // Not actually used, but it feels weird to not have an actual object here :)
@@ -48,9 +47,8 @@ public struct Passport {
     let countryId: String?
 }
 
-extension Passport {
-    public struct Builder {
-
+public extension Passport {
+    struct Builder {
         var birthYear: String?
         var issueYear: String?
         var expirationYear: String?
@@ -60,10 +58,9 @@ extension Passport {
         var passportId: String?
         var countryId: String?
 
-        public init() {
-        }
+        public init() {}
 
-        mutating public func set(_ key: String, to value: String?) throws {
+        public mutating func set(_ key: String, to value: String?) throws {
             switch key {
             case "byr":
                 birthYear = value
@@ -85,9 +82,7 @@ extension Passport {
                 throw BuilderError.invalidKey
             }
         }
-
     }
-
 }
 
 extension Passport.Builder {
@@ -110,12 +105,12 @@ public protocol ValidationPolicy {
 struct RelaxedValidationPolicy: ValidationPolicy {
     func isBuilderValid(_ builder: Passport.Builder) -> Bool {
         builder.birthYear != nil &&
-        builder.issueYear != nil &&
-        builder.expirationYear != nil &&
-        builder.height != nil &&
-        builder.hairColor != nil &&
-        builder.eyeColor != nil &&
-        builder.passportId != nil
+            builder.issueYear != nil &&
+            builder.expirationYear != nil &&
+            builder.height != nil &&
+            builder.hairColor != nil &&
+            builder.eyeColor != nil &&
+            builder.passportId != nil
     }
 }
 
@@ -133,15 +128,14 @@ private extension ClosedRange where Bound == Int {
 struct StrictValidationPolicy: ValidationPolicy {
     func isBuilderValid(_ builder: Passport.Builder) -> Bool {
         isBirthYearValid(builder) &&
-        isIssueYearValid(builder) &&
-        isExpirationYearValid(builder) &&
-        isHeightValid(builder) &&
-        isHairColorValid(builder) &&
-        isEyeColorValid(builder) &&
-        isPassportIdValid(builder) &&
-        isCountryIdValid(builder)
+            isIssueYearValid(builder) &&
+            isExpirationYearValid(builder) &&
+            isHeightValid(builder) &&
+            isHairColorValid(builder) &&
+            isEyeColorValid(builder) &&
+            isPassportIdValid(builder) &&
+            isCountryIdValid(builder)
     }
-
 
     private static let birthYearValidRange = 1920 ... 2002
     private static let issueYearValidRange = 2010 ... 2020
@@ -150,7 +144,7 @@ struct StrictValidationPolicy: ValidationPolicy {
     private static let heightInInchesValidRange = 59 ... 76
     private static let hairColorValidRegex = "^#[0-9a-f]{6}$"
     private static let validEyeColors = [
-        "amb", "blu", "brn", "gry", "grn", "hzl", "oth"
+        "amb", "blu", "brn", "gry", "grn", "hzl", "oth",
     ]
     private static let passportIdValidRegex = "^[0-9]{9}$"
 
@@ -236,8 +230,7 @@ struct StrictValidationPolicy: ValidationPolicy {
     }
 
     /// cid (Country ID) - ignored, missing or not.
-    private func isCountryIdValid(_ builder: Passport.Builder) -> Bool {
+    private func isCountryIdValid(_: Passport.Builder) -> Bool {
         return true
     }
-
 }

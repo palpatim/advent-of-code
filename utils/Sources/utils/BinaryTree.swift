@@ -41,7 +41,7 @@ extension BinaryTree: Equatable where Element: Equatable {
         let leftSidesAreEqual: Bool
         if let lhsLeft = lhs.left, let rhsLeft = rhs.left {
             leftSidesAreEqual = lhsLeft == rhsLeft
-        } else if lhs.left == nil && rhs.left == nil {
+        } else if lhs.left == nil, rhs.left == nil {
             leftSidesAreEqual = true
         } else {
             return false
@@ -54,7 +54,7 @@ extension BinaryTree: Equatable where Element: Equatable {
         let rightSidesAreEqual: Bool
         if let lhsRight = lhs.right, let rhsRight = rhs.right {
             rightSidesAreEqual = lhsRight == rhsRight
-        } else if lhs.right == nil && rhs.right == nil {
+        } else if lhs.right == nil, rhs.right == nil {
             rightSidesAreEqual = true
         } else {
             return false
@@ -66,7 +66,7 @@ extension BinaryTree: Equatable where Element: Equatable {
 
 /// Yes it works but don't do it, since there is no way to get parent references in using regular Codable
 /// conformance.
-extension BinaryTree: Codable where Element: Codable { }
+extension BinaryTree: Codable where Element: Codable {}
 
 public extension BinaryTree where Element: Codable {
     static func binaryTree(from jsonData: Data) throws -> BinaryTree<Element> {
@@ -116,7 +116,6 @@ extension BinaryTree {
         _ order: TraversalOrder,
         shouldStop: ((BinaryTree<Element>) -> Bool)? = nil
     ) -> [Element] {
-
         switch order {
         case .preOrder:
             return preOrderTraversal(shouldStop: shouldStop).elements
@@ -149,7 +148,6 @@ extension BinaryTree {
                 elements: elements, shouldStop: true
             )
             return traversalResult
-
         }
 
         if let right = right {
@@ -180,7 +178,6 @@ extension BinaryTree {
                 elements: elements, shouldStop: true
             )
             return traversalResult
-
         }
 
         if let left = left {
@@ -244,7 +241,6 @@ extension BinaryTree {
                 elements: elements, shouldStop: true
             )
             return traversalResult
-
         }
 
         let traversalResult = TraversalResult(
@@ -252,5 +248,4 @@ extension BinaryTree {
         )
         return traversalResult
     }
-
 }

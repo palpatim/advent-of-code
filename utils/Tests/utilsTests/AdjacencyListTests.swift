@@ -1,15 +1,14 @@
 //
 //  AdjacencyListTests.swift
-//  
+//
 //
 //  Created by Schmelter, Tim on 12/12/22.
 //
 
-import XCTest
 import utils
+import XCTest
 
 final class AdjacencyListTests: XCTestCase {
-
     func testUndirected() async throws {
         let graph = AdjacencyList<Int>()
         let zero = graph.createVertex(data: 0)
@@ -108,5 +107,4 @@ final class AdjacencyListTests: XCTestCase {
 
         XCTAssertNil(graph.shortestPath(from: zero, to: two))
     }
-
 }

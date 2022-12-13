@@ -1,6 +1,5 @@
 import Foundation
-public struct day08 {
-
+public enum day08 {
     public static func solvePart1(program: Program) -> Int {
         let runtime = ProgramRuntime(program)
 
@@ -14,8 +13,8 @@ public struct day08 {
         } catch let error as ProgramRuntime.RuntimeError {
             switch error {
             case
-                    .loopDetected(_, let acc),
-                    .negativeInstructionIndex(_, let acc):
+                let .loopDetected(_, acc),
+                let .negativeInstructionIndex(_, acc):
                 return acc
             }
         } catch {
@@ -99,11 +98,10 @@ extension ProgramStep: CustomStringConvertible {
             String(arg),
             " | ",
             String(acc),
-            " |"
+            " |",
         ]
         return components.joined()
     }
-
 }
 
 public class ProgramRuntime {
@@ -126,10 +124,10 @@ public class ProgramRuntime {
 
     public init(_ program: Program) {
         self.program = program
-        self.currentIndex = 0
-        self.accumulator = 0
-        self.visited = []
-        self.history = []
+        currentIndex = 0
+        accumulator = 0
+        visited = []
+        history = []
     }
 
     func execute() throws -> Int {
@@ -161,15 +159,14 @@ public class ProgramRuntime {
             history.append(step)
 
             switch instruction {
-            case .acc(let offset):
+            case let .acc(offset):
                 accumulator += offset
                 currentIndex += 1
-            case .jmp(let offset):
+            case let .jmp(offset):
                 currentIndex += offset
             case .nop:
                 currentIndex += 1
             }
-
         }
 
         return accumulator
@@ -219,16 +216,15 @@ public enum Instruction {
 
     var arg: Int {
         switch self {
-        case .acc(let arg), .jmp(let arg), .nop(let arg):
+        case let .acc(arg), let .jmp(arg), let .nop(arg):
             return arg
         }
     }
-
 }
 
 // https://stackoverflow.com/a/52447981/603369
 extension RangeReplaceableCollection where Self: StringProtocol {
     func paddingToLeft(upTo length: Int, using element: Element = " ") -> SubSequence {
-        return repeatElement(element, count: Swift.max(0, length-count)) + suffix(Swift.max(count, count-length))
+        return repeatElement(element, count: Swift.max(0, length - count)) + suffix(Swift.max(count, count - length))
     }
 }

@@ -1,6 +1,6 @@
-import XCTest
-import utils
 @testable import day03
+import utils
+import XCTest
 
 final class day03Tests: XCTestCase {
     func testPart1Sample() async throws {
@@ -26,7 +26,7 @@ final class day03Tests: XCTestCase {
 
 // MARK: - Solution
 
-class Solution {
+enum Solution {
     static func solvePart1(
         _ fileName: String
     ) async throws -> Int {
@@ -111,7 +111,6 @@ class Solution {
 
         return sharedItemPriority
     }
-
 }
 
 // MARK: - Structures
@@ -119,7 +118,7 @@ class Solution {
 extension Character {
     var rucksackPriority: UInt8 {
         // Safe to do this since all incoming chars are ASCII [a-zA-Z]
-        let ascii_self = self.asciiValue!
+        let ascii_self = asciiValue!
 
         let ascii_a = Character("a").asciiValue!
         let ascii_z = Character("z").asciiValue!
