@@ -11,6 +11,11 @@ import Foundation
 /// https://www.raywenderlich.com/773-swift-algorithm-club-graphs-with-adjacency-list
 open class AdjacencyList<Element: Hashable> {
     public var adjacencyDict = [Vertex<Element>: [Edge<Element>]]()
+
+    public var vertices: [Vertex<Element>] {
+        Array(adjacencyDict.keys)
+    }
+
     public init() {}
 }
 
