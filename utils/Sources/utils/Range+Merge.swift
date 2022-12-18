@@ -47,3 +47,15 @@ extension ClosedRange where Bound == Int {
         return [lowerRange, upperRange]
     }
 }
+
+extension Range where Bound: BinaryInteger {
+    public func intersection(_ other: Range<Bound>) -> Range<Bound>? {
+        guard overlaps(other) else {
+            return nil
+        }
+
+        let newLowerBound = Swift.max(lowerBound, other.lowerBound)
+        let newUpperBound = Swift.min(upperBound, other.upperBound)
+        return newLowerBound ..< newUpperBound + 1
+    }
+}
