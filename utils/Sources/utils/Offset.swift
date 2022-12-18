@@ -35,3 +35,35 @@ public extension Direction {
         }
     }
 }
+
+public struct Offset3D {
+    public let x: Int
+    public let y: Int
+    public let z: Int
+    public init(x: Int, y: Int, z: Int) {
+        self.x = x
+        self.y = y
+        self.z = z
+    }
+}
+
+public extension Coordinate3D {
+    func applying(_ offset: Offset3D) -> Coordinate3D {
+        Coordinate3D(x: x + offset.x, y: y + offset.y, z: z + offset.z)
+    }
+}
+
+public enum Direction3D: CaseIterable {
+    case posX, negX, posY, negY, posZ, negZ
+
+    public var offset: Offset3D {
+        switch self {
+        case .posX: return Offset3D(x: 1, y: 0, z: 0)
+        case .negX: return Offset3D(x: -1, y: 0, z: 0)
+        case .posY: return Offset3D(x: 0, y: 1, z: 0)
+        case .negY: return Offset3D(x: 0, y: -1, z: 0)
+        case .posZ: return Offset3D(x: 0, y: 0, z: 1)
+        case .negZ: return Offset3D(x: 0, y: 0, z: -1)
+        }
+    }
+}

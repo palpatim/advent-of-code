@@ -5,7 +5,7 @@
 //  Created by Schmelter, Tim on 12/9/22.
 //
 
-public struct Coordinate3D: Hashable {
+public struct Coordinate3D {
     public let x: Int
     public let y: Int
     public let z: Int
@@ -24,8 +24,12 @@ public struct Coordinate3D: Hashable {
     }
 }
 
+extension Coordinate3D: Equatable {}
+
+extension Coordinate3D: Hashable {}
+
 extension Coordinate3D: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "(\(x),\(y),\(z)"
+        "(\(x),\(y),\(z))"
     }
 }
