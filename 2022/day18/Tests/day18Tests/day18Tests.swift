@@ -1,5 +1,5 @@
-import utils
 import DequeModule
+import utils
 import XCTest
 
 final class aocTests: XCTestCase {
@@ -120,15 +120,16 @@ enum Solution {
 
         // For each blob face, DFS to find a path to water
         for blob in lavaBlobs {
-
-        scanBlobFaces:
-            for dir in Direction3D.allCases {
+            scanBlobFaces:
+                for dir in Direction3D.allCases
+            {
                 var stack = Deque<Coordinate3D>()
                 let candidate = blob.applying(dir.offset)
                 stack.append(candidate)
                 var visited = Set<Coordinate3D>()
-            dfs:
-                while !stack.isEmpty {
+                dfs:
+                    while !stack.isEmpty
+                {
                     let current = stack.popLast()!
                     visited.insert(current)
 
@@ -152,12 +153,10 @@ enum Solution {
                 }
                 obstructed.formUnion(visited)
             }
-
         }
 
         return unobstructedSurfaceCount
     }
-
 }
 
 // MARK: - Structures

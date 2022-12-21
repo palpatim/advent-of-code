@@ -4,13 +4,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "day19",
+    name: "day20",
     platforms: [.macOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
-            name: "day19",
-            targets: ["day19"]
+            name: "day20",
+            targets: ["day20"]
         ),
     ],
     dependencies: [
@@ -21,26 +21,17 @@ let package = Package(
             url: "https://github.com/apple/swift-collections.git",
             .upToNextMajor(from: "1.0.4")
         ),
-        .package(
-            url: "https://github.com/apple/swift-algorithms",
-            .upToNextMajor(from: "1.0.0")
-        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
-            name: "day19",
+            name: "day20",
             dependencies: ["utils"]
         ),
         .testTarget(
-            name: "day19Tests",
-            dependencies: [
-                "day19",
-                "utils",
-                .product(name: "Collections", package: "swift-collections"),
-                .product(name: "Algorithms", package: "swift-algorithms"),
-            ],
+            name: "day20Tests",
+            dependencies: ["day20", "utils", .product(name: "Collections", package: "swift-collections")],
             resources: [
                 .copy("sample.txt"),
                 .copy("real.txt"),

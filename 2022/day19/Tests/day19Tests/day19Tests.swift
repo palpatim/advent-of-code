@@ -1,6 +1,6 @@
-import utils
-import DequeModule
 import Algorithms
+import DequeModule
+import utils
 import XCTest
 
 final class aocTests: XCTestCase {
@@ -66,7 +66,7 @@ enum Solution {
         return results
     }
 
-    static func bestGeodeCount(for blueprint: Blueprint, turns: Int, maxSoFar: Int) -> Int {
+    static func bestGeodeCount(for blueprint: Blueprint, turns _: Int, maxSoFar _: Int) -> Int {
         var state = State(
             blueprint: blueprint,
             initialTimeRemaining: 24
@@ -77,7 +77,6 @@ enum Solution {
 
         return state.currentGeodes
     }
-
 }
 
 // MARK: - Structures
@@ -119,7 +118,7 @@ struct State {
         initialTimeRemaining: Int
     ) {
         self.blueprint = blueprint
-        self.timeRemaining = initialTimeRemaining
+        timeRemaining = initialTimeRemaining
     }
 
     mutating func processNextTick() -> Bool {
@@ -194,7 +193,7 @@ struct Blueprint {
         let regex = #/Blueprint (?<id>\d+): Each ore robot costs (?<oreRobotOreCost>\d+) ore. Each clay robot costs (?<clayRobotOreCost>\d+) ore. Each obsidian robot costs (?<obsidianRobotOreCost>\d+) ore and (?<obsidianRobotClayCost>\d+) clay. Each geode robot costs (?<geodeRobotOreCost>\d+) ore and (?<geodeRobotObsidianCost>\d+) obsidian./#
         let result = line.firstMatch(of: regex)!
 
-        self.id = Int(result.id)!
+        id = Int(result.id)!
 
         let oreRobotOreCost = Int(result.oreRobotOreCost)!
         let clayRobotOreCost = Int(result.clayRobotOreCost)!
@@ -203,12 +202,11 @@ struct Blueprint {
         let geodeRobotOreCost = Int(result.geodeRobotOreCost)!
         let geodeRobotObsidianCost = Int(result.geodeRobotObsidianCost)!
 
-        self.botCost = [
+        botCost = [
             .ore: [.ore: oreRobotOreCost],
             .clay: [.ore: clayRobotOreCost],
             .obsidian: [.ore: obsidianRobotOreCost, .clay: obsidianRobotClayCost],
-            .geode: [.ore: geodeRobotOreCost, .obsidian: geodeRobotObsidianCost]
+            .geode: [.ore: geodeRobotOreCost, .obsidian: geodeRobotObsidianCost],
         ]
-
     }
 }

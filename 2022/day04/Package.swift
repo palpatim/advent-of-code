@@ -24,7 +24,7 @@ let package = Package(
         .package(
             url: "https://github.com/apple/swift-algorithms",
             .upToNextMajor(from: "1.0.0")
-        )
+        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -39,7 +39,7 @@ let package = Package(
                 "day04",
                 "utils",
                 .product(name: "Collections", package: "swift-collections"),
-                .product(name: "Algorithms", package: "swift-algorithms")
+                .product(name: "Algorithms", package: "swift-algorithms"),
             ],
             resources: [
                 .copy("sample.txt"),

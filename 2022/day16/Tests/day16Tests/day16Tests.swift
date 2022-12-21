@@ -79,7 +79,7 @@ enum Solution {
         for k in valves.map({ $0.id }) {
             for i in valves.map({ $0.id }) {
                 for j in valves.map({ $0.id }) {
-                    distances[i]![j] = min(distances[i]![j]!, distances[i]![k]!+distances[k]![j]!)
+                    distances[i]![j] = min(distances[i]![j]!, distances[i]![k]! + distances[k]![j]!)
                 }
             }
         }
@@ -118,7 +118,7 @@ enum Solution {
                 flowSoFar: 0,
                 pathBitmask: 0,
                 nodesRemaining: idsToConsider
-            )
+            ),
         ]
 
         // DFS through non-zero valves
@@ -157,7 +157,6 @@ enum Solution {
                 pushCount += 1
                 stack.push(newState)
             }
-
         }
 
         let max: Int
@@ -211,8 +210,8 @@ struct Valve: Hashable {
     let destinations: [String]
 }
 
-extension Dictionary where Key == String, Value == [String: Int] {
-    public func matrixDistance(from start: Key, to end: Key) -> Int {
+public extension Dictionary where Key == String, Value == [String: Int] {
+    func matrixDistance(from start: Key, to end: Key) -> Int {
         self[start]![end]!
     }
 }

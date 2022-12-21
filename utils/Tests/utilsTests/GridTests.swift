@@ -8,7 +8,7 @@ final class GridTests: XCTestCase {
             [3, 4],
         ]
         XCTAssertThrowsError(try Grid(rows: rows)) {
-            guard case Grid<Int>.GridError.inconsistentSize = $0 else {
+            guard case GridError.inconsistentSize = $0 else {
                 XCTFail("Expected .inconsistentSize, got \($0)")
                 return
             }
@@ -26,7 +26,7 @@ final class GridTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try Grid(cells: cells)) {
-            guard case Grid<Int>.GridError.discontiguousCells = $0 else {
+            guard case GridError.discontiguousCells = $0 else {
                 XCTFail("Expected .discontiguousCells, got \($0)")
                 return
             }

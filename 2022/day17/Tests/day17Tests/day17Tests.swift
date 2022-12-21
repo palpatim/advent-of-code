@@ -5,7 +5,7 @@ import XCTest
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
         let actual = try await Solution.solve("sample.txt")
-        // Returns 2637 :( 
+        // Returns 2637 :(
         XCTAssertEqual(actual, 3068)
     }
 
@@ -79,7 +79,6 @@ enum Solution {
         // chamber.prettyPrint()
         return chamber.height
     }
-
 }
 
 // MARK: - Structures
@@ -129,13 +128,12 @@ struct Sprite {
             bitmap.append(row)
         }
 
-        self.width = maxWidth
+        width = maxWidth
         self.bitmap = bitmap
     }
 }
 
 extension Sprite {
-
     static let allSprites = [one, two, three, four, five]
 
     static let one = Sprite(stringLiteral: "####")
@@ -197,15 +195,15 @@ class Chamber {
     private var currentSprite: CurrentSprite!
 
     init() {
-        self.rows = [127]
-        self.currentSprite = nil
+        rows = [127]
+        currentSprite = nil
     }
 
     /// Add sprite to the chamber 3 rows above the row containing the topmost rock, and 2 spaces away from the left edge. Returns
     /// the horizontal offset of the sprite (that is, the number of spaces the sprite was left-shifted to put it into its starting position)
     func addSprite(_ sprite: Sprite) {
         let offset = Chamber.width - Chamber.spriteLeftStartPosition - sprite.width
-        self.currentSprite = CurrentSprite(sprite: sprite, xOffset: offset, yOffset: 0)
+        currentSprite = CurrentSprite(sprite: sprite, xOffset: offset, yOffset: 0)
 
         for _ in 0 ..< sprite.height + 3 {
             rows.prepend(0)
@@ -312,7 +310,7 @@ extension Chamber {
         var output = [String]()
         for row in rows.prefix(upTo: rows.count - 1) {
             let convertedRow = String(row, radix: 2)
-                .map({ $0 == "1" ? "#" : "." })
+                .map { $0 == "1" ? "#" : "." }
                 .joined()
             let formattedRow = convertedRow.leftPadding(toLength: 7, withPad: ".")
             output.append("|\(formattedRow)|")
@@ -324,7 +322,7 @@ extension Chamber {
 
 extension String {
     func leftPadding(toLength: Int, withPad character: Character) -> String {
-        let newLength = self.count
+        let newLength = count
         if newLength < toLength {
             return String(repeatElement(character, count: toLength - newLength)) + self
         } else {
@@ -332,4 +330,3 @@ extension String {
         }
     }
 }
-

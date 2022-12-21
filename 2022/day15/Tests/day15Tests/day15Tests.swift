@@ -10,17 +10,17 @@ final class aocTests: XCTestCase {
 
     func testPart1Real() async throws {
         let actual = try await Solution.solve("real.txt", strategy: .rowCount(2_000_000))
-        XCTAssertEqual(actual, 4873353)
+        XCTAssertEqual(actual, 4_873_353)
     }
 
     func testPart2Sample() async throws {
         let actual = try await Solution.solve("sample.txt", strategy: .tuningFrequency)
-        XCTAssertEqual(actual, 56000011)
+        XCTAssertEqual(actual, 56_000_011)
     }
 
     func testPart2Real() async throws {
         let actual = try await Solution.solve("real.txt", strategy: .tuningFrequency)
-        XCTAssertEqual(actual, 11600823139120)
+        XCTAssertEqual(actual, 11_600_823_139_120)
     }
 }
 
@@ -98,12 +98,11 @@ enum Solution {
         }
 
         switch strategy {
-        case .rowCount(let row):
+        case let .rowCount(row):
             return solveForRowCount(circles: circles, row: row)
         case .tuningFrequency:
             return solveForTuningFrequency(circles: circles)
         }
-
     }
 
     static func solveForTuningFrequency(
@@ -112,7 +111,7 @@ enum Solution {
         let maxCoord = 4_000_000
         let beaconCandidates = circles
             .map { $0.beacon }
-            .filter { 0 <= $0.x && $0.x <= maxCoord && 0 <= $0.y && $0.y <= maxCoord }
+            .filter { $0.x >= 0 && $0.x <= maxCoord && $0.y >= 0 && $0.y <= maxCoord }
 
         let minY = beaconCandidates
             .map { $0.y }
@@ -247,7 +246,6 @@ struct ManhattanCircle {
         let dX = radius - dY
         return center.x - dX ... center.x + dX
     }
-
 }
 
 extension Coordinate {
