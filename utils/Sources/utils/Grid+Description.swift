@@ -12,14 +12,23 @@ extension Grid: CustomStringConvertible {
         description()
     }
 
-    public func description(separatedBy separator: String = "\t") -> String {
-        let firstRow = (-1 ..< gridSize.width)
-            .map { $0 == -1 ? "" : "\($0)" }
-            .joined(separator: separator)
+    public func description(
+        separatedBy separator: String = "\t",
+        headers: Bool = true
+    ) -> String {
+        var rows = [String]()
 
-        var rows = [firstRow]
+        if headers {
+            let firstRow = (-1 ..< gridSize.width)
+                .map { $0 == -1 ? "" : "\($0)" }
+                .joined(separator: separator)
+            rows = [firstRow]
+        }
         for row in 0 ..< gridSize.height {
-            var rowElements = ["\(row)"]
+            var rowElements = [String]()
+            if headers {
+                rowElements = ["\(row)"]
+            }
             for col in 0 ..< gridSize.width {
                 let coord = Coordinate(x: col, y: row)
                 let element = cells[coord] != nil ? "\(cells[coord]!)" : "nil"

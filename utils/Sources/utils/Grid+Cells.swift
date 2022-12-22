@@ -99,6 +99,40 @@ public extension Grid {
         return cells
     }
 
+    /// Cells of the grid returned as an array of arrays. The outer array is ordered from lowest to highest y coordinate. The inner array
+    /// is indexed from lowest to highest x coordinate.
+    var rows: [[Cell]] {
+        var rows = [[Cell]]()
+        for y in 0 ..< gridSize.height {
+            var row = [Cell]()
+            for x in 0 ..< gridSize.width {
+                let coord = Coordinate(x: x, y: y)
+                if let cell = cell(at: coord) {
+                    row.append(cell)
+                }
+            }
+            rows.append(row)
+        }
+        return rows
+    }
+
+    /// Cells of the grid returned as an array of arrays. The outer array is ordered from lowest to highest x coordinate. The inner array
+    /// is indexed from lowest to highest y coordinate.
+    var columns: [[Cell]] {
+        var columns = [[Cell]]()
+        for x in 0 ..< gridSize.width {
+            var col = [Cell]()
+            for y in 0 ..< gridSize.height {
+                let coord = Coordinate(x: x, y: y)
+                if let cell = cell(at: coord) {
+                    col.append(cell)
+                }
+            }
+            columns.append(col)
+        }
+        return columns
+    }
+
     /// Returns an array of cells starting with `start`, moving in `direction`.
     ///
     /// - Parameters:
@@ -128,6 +162,7 @@ public extension Grid {
     ) {
         cells[coordinate] = value
     }
+
 }
 
 extension Grid.Cell: Equatable where Value: Equatable {}

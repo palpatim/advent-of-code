@@ -5,6 +5,8 @@
 //  Created by Schmelter, Tim on 12/17/21.
 //
 
+// MARK: - Offset
+
 public struct Offset {
     public let x: Int
     public let y: Int
@@ -35,6 +37,20 @@ public extension Direction {
         }
     }
 }
+
+public extension RelativeDirection {
+    /// Returns an Offset of magnitude 1 along each axis. `x` increases from left to right. `y` increases from top to bottom.
+    var unitOffset: Offset {
+        switch self {
+        case .right: return Offset(x: 1, y: 0)
+        case .down: return Offset(x: 0, y: 1)
+        case .left: return Offset(x: -1, y: 0)
+        case .up: return Offset(x: 0, y: -1)
+        }
+    }
+}
+
+// MARK: - Offset3D
 
 public struct Offset3D {
     public let x: Int
