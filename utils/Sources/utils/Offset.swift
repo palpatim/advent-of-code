@@ -63,6 +63,8 @@ public struct Offset3D {
     }
 }
 
+extension Offset3D: Hashable { }
+
 public extension Coordinate3D {
     func applying(_ offset: Offset3D) -> Coordinate3D {
         Coordinate3D(x: x + offset.x, y: y + offset.y, z: z + offset.z)
