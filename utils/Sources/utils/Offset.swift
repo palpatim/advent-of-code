@@ -23,7 +23,7 @@ public extension Coordinate {
 }
 
 public extension Direction {
-    /// Returns an Offset of magnitude 1 along each axis
+    /// Returns an Offset of magnitude 1 along each axis, where x increases west-to-east and y increases south-to-north
     var unitOffset: Offset {
         switch self {
         case .e: return Offset(x: 1, y: 0)
@@ -34,6 +34,20 @@ public extension Direction {
         case .sw: return Offset(x: -1, y: -1)
         case .s: return Offset(x: 0, y: -1)
         case .se: return Offset(x: 1, y: -1)
+        }
+    }
+
+    /// Returns an Offset of magnitude 1 along each axis, where x increases west-to-east and y increases north-to-south.
+    var coordinateOffset: Offset {
+        switch self {
+        case .e: return Offset(x: 1, y: 0)
+        case .ne: return Offset(x: 1, y: -1)
+        case .n: return Offset(x: 0, y: -1)
+        case .nw: return Offset(x: -1, y: -1)
+        case .w: return Offset(x: -1, y: 0)
+        case .sw: return Offset(x: -1, y: 1)
+        case .s: return Offset(x: 0, y: 1)
+        case .se: return Offset(x: 1, y: 1)
         }
     }
 }
