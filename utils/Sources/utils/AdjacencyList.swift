@@ -12,11 +12,15 @@ import Foundation
 open class AdjacencyList<Element: Hashable> {
     public var adjacencyDict = [Vertex<Element>: [Edge<Element>]]()
 
+    /// Lookup table of unique element to its vertex
+    public var vertexByElement = [Element: Vertex<Element>]()
+
     public var vertices: [Vertex<Element>] {
         Array(adjacencyDict.keys)
     }
 
     public init() {}
+
 }
 
 extension AdjacencyList: Graphable {
@@ -71,11 +75,16 @@ extension AdjacencyList: Graphable {
         return result
     }
 
+    @discardableResult
     public func createVertex(data: Element) -> Vertex<Element> {
         let vertex = Vertex(data)
 
         if adjacencyDict[vertex] == nil {
             adjacencyDict[vertex] = []
+        }
+
+        if vertexByElement[data] == nil {
+            vertexByElement[data] = vertex
         }
 
         return vertex

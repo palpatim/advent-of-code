@@ -8,6 +8,7 @@
 import Foundation
 
 extension AdjacencyList {
+
     /// Returns an array of edges representing the shortest path from `source` to `destination`
     ///
     /// This method uses Dijkstra's algorithm to find the lowest-cost path between the two vertices.
