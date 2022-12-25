@@ -9,6 +9,13 @@ import DequeModule
 import Foundation
 
 extension AdjacencyList {
+    public func bfs(
+        from source: Vertex<Element>,
+        to destination: Vertex<Element>
+    ) -> [Vertex<Element>] {
+        bfs(from: source) { $0 == destination }
+    }
+    
     /// Performs a breadth-first search on the graph, returning the path from source to the stopping node.
     ///
     /// The returned array contains the elements in order from source vertex to the stopping vertex, inclusive. If no path exists,

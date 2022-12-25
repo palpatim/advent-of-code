@@ -60,7 +60,7 @@ final class AdjacencyListTests: XCTestCase {
         XCTAssertEqual(graph.shortestPath(from: zero, to: two)?.totalWeight, 3)
     }
 
-    func testShortestPath() async throws {
+    func testShortestPath_dijkstra() async throws {
         let graph = AdjacencyList<Int>()
         let zero = graph.createVertex(data: 0)
         let one = graph.createVertex(data: 1)
@@ -87,7 +87,7 @@ final class AdjacencyListTests: XCTestCase {
         XCTAssertEqual(graph.shortestPath(from: zero, to: two)?.totalWeight, 2)
     }
 
-    func testNoPath() async throws {
+    func testNoPath_dijkstra() async throws {
         let graph = AdjacencyList<Int>()
         let zero = graph.createVertex(data: 0)
         let one = graph.createVertex(data: 1)
@@ -107,4 +107,51 @@ final class AdjacencyListTests: XCTestCase {
 
         XCTAssertNil(graph.shortestPath(from: zero, to: two))
     }
+
+    func testShortestPath_bfs() async throws {
+        let graph = AdjacencyList<Int>()
+        let zero = graph.createVertex(data: 0)
+        let one = graph.createVertex(data: 1)
+        let two = graph.createVertex(data: 2)
+        graph.add(
+            .directed,
+            from: zero,
+            to: one
+        )
+        graph.add(
+            .directed,
+            from: one,
+            to: two
+        )
+        graph.add(
+            .directed,
+            from: zero,
+            to: two
+        )
+
+        // Paths returned by BFS include start vertex
+        XCTAssertEqual(graph.bfs(from: zero, to: two).count, 2)
+    }
+
+    func testNoPath_bfs() async throws {
+        let graph = AdjacencyList<Int>()
+        let zero = graph.createVertex(data: 0)
+        let one = graph.createVertex(data: 1)
+        let two = graph.createVertex(data: 2)
+        graph.add(
+            .directed,
+            from: zero,
+            to: one,
+            weight: 1.0
+        )
+        graph.add(
+            .directed,
+            from: two,
+            to: one,
+            weight: 2.0
+        )
+
+        XCTAssertEqual(graph.bfs(from: zero, to: two).count, 0)
+    }
+
 }
