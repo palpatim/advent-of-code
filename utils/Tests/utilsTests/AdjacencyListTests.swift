@@ -154,4 +154,51 @@ final class AdjacencyListTests: XCTestCase {
         XCTAssertEqual(graph.bfs(from: zero, to: two).count, 0)
     }
 
+    func testShortestPath_floydWarshall() async throws {
+        let graph = AdjacencyList<Int>()
+        let zero = graph.createVertex(data: 0)
+        let one = graph.createVertex(data: 1)
+        let two = graph.createVertex(data: 2)
+        graph.add(
+            .directed,
+            from: zero,
+            to: one
+        )
+        graph.add(
+            .directed,
+            from: one,
+            to: two
+        )
+        graph.add(
+            .directed,
+            from: zero,
+            to: two
+        )
+
+        let distances = graph.distancesByVertex()
+        XCTAssertEqual(distances[zero]?[two], 1)
+    }
+
+    func testNoPath_floydWarshall() async throws {
+        let graph = AdjacencyList<Int>()
+        let zero = graph.createVertex(data: 0)
+        let one = graph.createVertex(data: 1)
+        let two = graph.createVertex(data: 2)
+        graph.add(
+            .directed,
+            from: zero,
+            to: one,
+            weight: 1.0
+        )
+        graph.add(
+            .directed,
+            from: two,
+            to: one,
+            weight: 2.0
+        )
+
+        let distances = graph.distancesByVertex()
+        XCTAssertEqual(distances[zero]?[two], Double.infinity)
+    }
+
 }
