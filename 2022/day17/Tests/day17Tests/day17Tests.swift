@@ -17,13 +17,13 @@ final class aocTests: XCTestCase {
     }
 
     func testPart2Sample() async throws {
-        let actual = try await Solution.solve("sample.txt", rockCount: 2022)
-        XCTAssertEqual(actual, -1)
+        let actual = try await Solution.solve("sample.txt", rockCount: 1_000_000_000_000)
+        XCTAssertEqual(actual, 1_514_285_714_288)
     }
 
     func testPart2Real() async throws {
-        let actual = try await Solution.solve("real.txt", rockCount: 2022)
-        XCTAssertEqual(actual, -1)
+        let actual = try await Solution.solve("real.txt", rockCount: 1_000_000_000_000)
+        XCTAssertEqual(actual, 1526744186042)
     }
 }
 
@@ -41,27 +41,24 @@ enum Solution {
         let gasPattern = Array(try! String(contentsOf: fileURL))
 
         return getChamberHeight(
-            rockCount: rockCount,
+            rocksToDrop: rockCount,
             gasPattern: gasPattern
         )
     }
 
     static func getChamberHeight(
-        rockCount: Int,
+        rocksToDrop: Int,
         gasPattern: [Character]
     ) -> Int {
         let chamber = Chamber()
 
-        var rocks = 0
+        var fallenRocks = 0
         var overallIterations = 0
-        while rocks < rockCount {
-            defer {
-                if shouldPrettyPrint {
-                    chamber.prettyPrint("\n== Rock \(rocks) came to rest; height: \(chamber.height) ==")
-                }
-                rocks += 1
-            }
-            let sprite = Sprite.allSprites[rocks % Sprite.allSprites.count]
+        var seen = [String: (fallenRocks: Int, height: Int)]()
+
+        while fallenRocks < rocksToDrop {
+            let spriteIndex = fallenRocks % Sprite.allSprites.count
+            let sprite = Sprite.allSprites[spriteIndex]
             chamber.addSprite(sprite)
             var isFalling = true
 
@@ -81,7 +78,7 @@ enum Solution {
                 }
 
                 if shouldPrettyPrintWhileFalling {
-                    chamber.prettyPrint("\niterations: \(overallIterations), rock \(rocks), gas \(gas)")
+                    chamber.prettyPrint("\niterations: \(overallIterations), rock \(fallenRocks), gas \(gas)")
                 }
 
                 _ = chamber.moveCurrentSprite(direction)
@@ -92,6 +89,32 @@ enum Solution {
                     break
                 }
             }
+
+            if shouldPrettyPrint {
+                chamber.prettyPrint("\n== Rock \(fallenRocks) came to rest; height: \(chamber.height) ==")
+            }
+
+            let gasIndex = (overallIterations - 1) % gasPattern.count
+            let key = "\(spriteIndex)|\(gasIndex)"
+
+            if let previous = seen[key] {
+                // Thanks to https://github.com/jpignata/adventofcode/blob/main/2022/17/solve.py
+                // from https://github.com/jpignata for helping me understand that we need to look
+                // for a cycle in the *remaining* time, not just a cycle in the *completed* time
+                print("Found cycle at rock \(fallenRocks)")
+                let remainingRocks = rocksToDrop - fallenRocks - 1
+                let cyclePeriod = fallenRocks - previous.fallenRocks
+
+                if remainingRocks % cyclePeriod == 0 {
+                    print("Solution: using cycle at rock \(fallenRocks)")
+                    let heightPerCycle = chamber.height - previous.height
+                    let remainingCycles = remainingRocks / cyclePeriod
+                    let totalHeight = (remainingCycles * heightPerCycle) + chamber.height
+                    return totalHeight
+                }
+            }
+            seen[key] = (fallenRocks: fallenRocks, height: chamber.height)
+            fallenRocks += 1
         }
 
         // chamber.prettyPrint()
