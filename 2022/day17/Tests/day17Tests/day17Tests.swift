@@ -2,25 +2,27 @@ import DequeModule
 import utils
 import XCTest
 
+let shouldPrettyPrint: Bool = false
+let shouldPrettyPrintWhileFalling: Bool = false
+
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
-        let actual = try await Solution.solve("sample.txt")
-        // Returns 2637 :(
+        let actual = try await Solution.solve("sample.txt", rockCount: 2022)
         XCTAssertEqual(actual, 3068)
     }
 
     func testPart1Real() async throws {
-        let actual = try await Solution.solve("real.txt")
-        XCTAssertEqual(actual, -1)
+        let actual = try await Solution.solve("real.txt", rockCount: 2022)
+        XCTAssertEqual(actual, 3111)
     }
 
     func testPart2Sample() async throws {
-        let actual = try await Solution.solve("sample.txt")
+        let actual = try await Solution.solve("sample.txt", rockCount: 2022)
         XCTAssertEqual(actual, -1)
     }
 
     func testPart2Real() async throws {
-        let actual = try await Solution.solve("real.txt")
+        let actual = try await Solution.solve("real.txt", rockCount: 2022)
         XCTAssertEqual(actual, -1)
     }
 }
@@ -29,7 +31,8 @@ final class aocTests: XCTestCase {
 
 enum Solution {
     static func solve(
-        _ fileName: String
+        _ fileName: String,
+        rockCount: Int
     ) async throws -> Int {
         guard let fileURL = Bundle.module.url(forResource: fileName, withExtension: nil) else {
             throw StringParsingError("Unable to open \(fileName)")
@@ -38,7 +41,7 @@ enum Solution {
         let gasPattern = Array(try! String(contentsOf: fileURL))
 
         return getChamberHeight(
-            rockCount: 2022,
+            rockCount: rockCount,
             gasPattern: gasPattern
         )
     }
@@ -53,6 +56,9 @@ enum Solution {
         var overallIterations = 0
         while rocks < rockCount {
             defer {
+                if shouldPrettyPrint {
+                    chamber.prettyPrint("\n== Rock \(rocks) came to rest; height: \(chamber.height) ==")
+                }
                 rocks += 1
             }
             let sprite = Sprite.allSprites[rocks % Sprite.allSprites.count]
@@ -63,9 +69,21 @@ enum Solution {
                 defer {
                     overallIterations += 1
                 }
+
                 let gas = gasPattern[overallIterations % gasPattern.count]
 
-                let direction: Chamber.SpriteDirection = gas == "<" ? .left : .right
+                let direction: Chamber.SpriteDirection
+                switch gas {
+                case "<": direction = .left
+                case ">": direction = .right
+                default:
+                    fatalError("Unexpected gas: \(gas)")
+                }
+
+                if shouldPrettyPrintWhileFalling {
+                    chamber.prettyPrint("\niterations: \(overallIterations), rock \(rocks), gas \(gas)")
+                }
+
                 _ = chamber.moveCurrentSprite(direction)
 
                 guard chamber.moveCurrentSprite(.down) else {
@@ -110,7 +128,7 @@ struct Sprite {
     /// Width of the widest part of the bitmap, to make it easier to check wall collisions
     let width: UInt8
 
-    init(stringLiteral: String) {
+    init(stringLiteral: String, verifyHeight: Int, verifyWidth: Int) {
         let lines = stringLiteral.lines
         var bitmap = [UInt8]()
         var maxWidth: UInt8 = 0
@@ -130,37 +148,44 @@ struct Sprite {
 
         width = maxWidth
         self.bitmap = bitmap
+
+        guard
+            self.height == verifyHeight,
+            self.width == verifyWidth
+        else {
+            fatalError("Failed verification")
+        }
     }
 }
 
 extension Sprite {
     static let allSprites = [one, two, three, four, five]
 
-    static let one = Sprite(stringLiteral: "####")
+    static let one = Sprite(stringLiteral: "####", verifyHeight: 1, verifyWidth: 4)
 
     static let two = Sprite(stringLiteral: """
     .#.
     ###
     .#.
-    """)
+    """, verifyHeight: 3, verifyWidth: 3)
 
     static let three = Sprite(stringLiteral: """
     ..#
     ..#
     ###
-    """)
+    """, verifyHeight: 3, verifyWidth: 3)
 
     static let four = Sprite(stringLiteral: """
     #
     #
     #
     #
-    """)
+    """, verifyHeight: 4, verifyWidth: 1)
 
     static let five = Sprite(stringLiteral: """
     ##
     ##
-    """)
+    """, verifyHeight: 2, verifyWidth: 2)
 }
 
 class Chamber {
@@ -227,6 +252,8 @@ class Chamber {
         if let idx = rows.firstIndex(where: { $0 > 0 }) {
             rows.removeFirst(idx)
         }
+
+        currentSprite = nil
     }
 
     /// Attempt to move sprite down by specified offset. Return true if move was successful, false if blocked. If blocked, sprite comes
@@ -242,7 +269,13 @@ class Chamber {
         }
 
         currentSprite.yOffset += 1
-        return true
+
+        if collides() {
+            currentSprite.yOffset -= 1
+            return false
+        } else {
+            return true
+        }
     }
 
     /// Attempt to move sprite left by specified offset. Return true if move was successful, false if blocked.
@@ -294,29 +327,75 @@ class Chamber {
         return false
     }
 
-//    /// Clears the current sprite from the bitmap
-//    private func clearCurrentSprite() {
-//        let invertedRows = currentSprite.xOffsetBitmap.map { ~$0 }
-//        for (index, invertedRow) in invertedRows.enumerated() {
-//            rows[index + currentSprite.yOffset] &= invertedRow
-//        }
-//    }
 }
 
 extension Chamber {
-    func prettyPrint() {
+    enum MapSymbol: Character {
+        case open = "."
+        case wall = "|"
+        case floor = "-"
+        case restingRock = "#"
+        case fallingRock = "@"
+        case collision = "*"
+    }
+
+    /// Prints a map of the chamber.
+    ///
+    /// Legend:
+    /// - `.`: Open space
+    /// - `|`: Wall
+    /// - `-`: Floor
+    /// - `#`: Rock at rest
+    /// - `@`: Falling rock
+    /// - `*`: Collision (does not show collisions between falling rock and right wall)
+    func prettyPrint(_ header: String? = nil) {
+        if let header {
+            print(header)
+        }
         print("rows: \(rows)")
 
-        var output = [String]()
-        for row in rows.prefix(upTo: rows.count - 1) {
-            let convertedRow = String(row, radix: 2)
-                .map { $0 == "1" ? "#" : "." }
-                .joined()
-            let formattedRow = convertedRow.leftPadding(toLength: 7, withPad: ".")
-            output.append("|\(formattedRow)|")
-        }
-        output.append("+-------+")
+        let output = (0 ..< rows.count).map { prettyPrintRow(at: $0) }
+
         print(output.joined(separator: "\n"))
+    }
+
+    func prettyPrintRow(at index: Int) -> String {
+        guard index < rows.count - 1 else {
+            return "+-------+"
+        }
+
+        var chars = [MapSymbol]()
+
+        if
+            let currentSprite,
+            (
+                currentSprite.yOffset ..< currentSprite.yOffset + currentSprite.sprite.height
+            ).contains(index)
+        {
+            let spriteRow = currentSprite.xOffsetBitmap[index - currentSprite.yOffset]
+
+            // Now test each bit of the row to fill in the appropriate character
+            for shift in 0 ..< 7 {
+                let test: UInt8 = 1 << shift
+                let occupiedByCurrentSprite = spriteRow & test > 0
+                let occupiedByExistingRock = rows[index] & test > 0
+                switch (occupiedByCurrentSprite, occupiedByExistingRock) {
+                case (true, true): chars.insert(.collision, at: 0)
+                case (true, false): chars.insert(.fallingRock, at: 0)
+                case (false, true): chars.insert(.restingRock, at: 0)
+                case (false, false): chars.insert(.open, at: 0)
+                }
+            }
+        } else {
+            chars.append(
+                contentsOf:
+                    String(rows[index], radix: 2)
+                    .map { $0 == "1" ? MapSymbol.restingRock : .open }
+            )
+        }
+        let convertedRow = String(chars.map { $0.rawValue })
+        let formattedRow = convertedRow.leftPadding(toLength: 7, withPad: ".")
+        return "|\(formattedRow)|"
     }
 }
 
