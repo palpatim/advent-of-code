@@ -3,25 +3,63 @@ import DequeModule
 import utils
 import XCTest
 
+var shouldLog: Bool = false
+var shouldPrettyPrint: Bool = false
+
+func log(_ msg: String) {
+    guard shouldLog else {
+        return
+    }
+    print(msg)
+}
+
 final class aocTests: XCTestCase {
     func testPart1Sample() async throws {
-        let actual = try await Solution.solve("sample.txt", turns: 24)
+        let actual = try await Solution.solve(
+            "sample.txt",
+            turns: 24,
+            prefixSize: 750,
+            taking: .max,
+            mapper: { $0.id * $1 },
+            reducer: (initialValue: 0, fn: { $0 + $1 })
+        )
         XCTAssertEqual(actual, 33)
     }
 
     func testPart1Real() async throws {
-        let actual = try await Solution.solve("real.txt", turns: 24)
-        XCTAssertEqual(actual, -1)
+        let actual = try await Solution.solve(
+            "real.txt",
+            turns: 24,
+            prefixSize: 750,
+            taking: .max,
+            mapper: { $0.id * $1 },
+            reducer: (initialValue: 0, fn: { $0 + $1 })
+        )
+        XCTAssertEqual(actual, 1023)
     }
 
     func testPart2Sample() async throws {
-        let actual = try await Solution.solve("sample.txt", turns: 24)
-        XCTAssertEqual(actual, -1)
+        let actual = try await Solution.solve(
+            "sample.txt",
+            turns: 32,
+            prefixSize: 2_000,
+            taking: 3,
+            mapper: { $1 },
+            reducer: (initialValue: 1, fn: { $0 * $1 })
+        )
+        XCTAssertEqual(actual, 3_472)
     }
 
     func testPart2Real() async throws {
-        let actual = try await Solution.solve("real.txt", turns: 24)
-        XCTAssertEqual(actual, -1)
+        let actual = try await Solution.solve(
+            "real.txt",
+            turns: 32,
+            prefixSize: 2_000,
+            taking: 3,
+            mapper: { $1 },
+            reducer: (initialValue: 1, fn: { $0 * $1 })
+        )
+        XCTAssertEqual(actual, 13_520)
     }
 }
 
@@ -30,7 +68,11 @@ final class aocTests: XCTestCase {
 enum Solution {
     static func solve(
         _ fileName: String,
-        turns: Int
+        turns: Int,
+        prefixSize: Int,
+        taking: Int,
+        mapper: (Blueprint, Int) -> Int,
+        reducer: (initialValue: Int, fn: (Int, Int) -> Int)
     ) async throws -> Int {
         guard let fileURL = Bundle.module.url(forResource: fileName, withExtension: nil) else {
             throw StringParsingError("Unable to open \(fileName)")
@@ -40,156 +82,121 @@ enum Solution {
             .filter { !$0.isEmpty }
             .map { Blueprint($0) }
 
-        let results = bestGeodeCount(forEachBluePrint: blueprints, turns: turns)
+        // Thanks to https://github.com/jpignata/adventofcode/blob/main/2022/19/solve.py for
+        // strategy
+        var resultsByBlueprint = [Blueprint: Int]()
 
-        let result = results
-            .map { $0.blueprint.id * $0.geodeCount }
-            .reduce(0, +)
+        for blueprint in blueprints.prefix(taking) {
+            var states = [State()]
+            for turn in 0 ..< turns {
+                var nextStates = [State]()
+                for state in states {
+                    for material in Material.allCases {
+                        if state.hasRawMaterialsForRobot(
+                            harvesting: material,
+                            using: blueprint
+                        ) && shouldBuildBotToHarvest(
+                            harvestMaterial: material,
+                            using: blueprint,
+                            considering: state
+                        ) {
+                            nextStates.append(
+                                State.process(state, harvesting: material, using: blueprint)
+                            )
+                        }
+                    }
+                }
+
+                log("After turn \(turn):")
+
+                log(" \(nextStates.count) raw, turn \(turn)")
+                prettyPrint(nextStates)
+
+                let sortedStates = Set(nextStates).sorted { $0 > $1 }
+                log(" \(sortedStates.count) uniqued & sorted, turn \(turn)")
+                prettyPrint(sortedStates)
+
+                states = Array( sortedStates.prefix(prefixSize) )
+                log(" \(states.count) states, turn \(turn)")
+                prettyPrint(states)
+
+                log("")
+            }
+            let resultForBlueprint = states.first?.rawMaterials[.geode] ?? 0
+            resultsByBlueprint[blueprint] = resultForBlueprint
+            print("Blueprint \(blueprint.id): \(resultForBlueprint)")
+        }
+
+        let result = resultsByBlueprint
+            .map { mapper($0, $1) }
+            .reduce(reducer.initialValue, reducer.fn)
 
         return result
     }
 
-    static func bestGeodeCount(forEachBluePrint blueprints: [Blueprint], turns: Int) -> [State] {
-        var results = [State]()
-        for blueprint in blueprints {
-            let result = bestProductionStrategy(for: blueprint, turns: turns)
-            results.append(result)
+    static func prettyPrint(_ states: [State]) {
+        guard shouldPrettyPrint else {
+            return
         }
-        return results
+        print(
+            states
+                .map { "  \($0)" }
+                .joined(separator: "\n")
+        )
     }
 
-    static func bestProductionStrategy(for blueprint: Blueprint, turns _: Int) -> State {
-        let state = State(
-            blueprint: blueprint,
-            initialTimeRemaining: 24
-        )
-
-        var maxGeodeState = state
-        // Can never build a bot on the first turn, so it will always be a "wait only" turn
-        var stack = Deque<Action>([.init(state, nil)])
-        var visited = Set<Action>()
-        while !stack.isEmpty {
-            let action = stack.removeLast()
-            guard !visited.contains(action) else {
-                continue
-            }
-            visited.insert(action)
-
-            var currentState = action.state
-            if currentState.processNextTick(buildingBotToHarvest: action.material) {
-                let candidateMaterials = currentState.botCandidates()
-                for candidateMaterial in candidateMaterials {
-                    let action = Action(currentState, candidateMaterial)
-                    if !visited.contains(action) {
-                        stack.append(action)
-                    }
-                }
-            }
-            if currentState.geodeCount > maxGeodeState.geodeCount {
-                maxGeodeState = currentState
-            }
-        }
-
-        return maxGeodeState
+    static func shouldBuildBotToHarvest(
+        harvestMaterial: Material,
+        using blueprint: Blueprint,
+        considering state: State
+    ) -> Bool {
+        let botCount = state.bots[harvestMaterial, default: 0]
+        let maxMaterial = blueprint.maxMaterialCost[harvestMaterial]!
+        return botCount < maxMaterial
     }
 }
 
 // MARK: - Structures
 
-struct Action: Hashable {
-    let state: State
-    let material: Material?
-    init(_ state: State, _ material: Material?) {
-        self.state = state
-        self.material = material
-    }
-}
-
+/// Cases are in order of precedence
 enum Material: CaseIterable, Hashable {
+    case wait
     case ore
     case clay
     case obsidian
     case geode
 }
 
+extension Material: CustomStringConvertible {
+    var description: String {
+        switch self {
+        case .wait: return "wa"
+        case .ore: return "or"
+        case .clay: return "cl"
+        case .obsidian: return "ob"
+        case .geode: return "ge"
+        }
+    }
+}
+
+extension Material: Comparable {
+    static var sortKeys: [Material] {
+        allCases.reversed().filter { $0 != .wait }
+    }
+}
+
 struct State: Hashable {
-    let blueprint: Blueprint
-    var timeRemaining: Int
     var rawMaterials: [Material: Int]
     var bots: [Material: Int]
-    var botsToNotBuild = Set<Material>()
-    var history: [Int: Material?]
 
-    var geodeCount: Int {
-        rawMaterials[.geode] ?? 0
-    }
-
-    init(
-        blueprint: Blueprint,
-        initialTimeRemaining: Int
-    ) {
-        self.blueprint = blueprint
-        self.timeRemaining = initialTimeRemaining
-        self.bots = [.ore: 1]
-        self.rawMaterials = [:]
-        self.history = [:]
-    }
-
-    /// Processes the next tick of state. Builds a new bot to harvest `harvestMaterial`, if specified, harvests materials from existing
-    /// bots, and decreases remaining time.
-    ///
-    /// Callers must ensure that there are sufficient raw materials prior to building the bot
-    mutating func processNextTick(buildingBotToHarvest harvestMaterial: Material?) -> Bool {
-        history[timeRemaining] = harvestMaterial
-        rawMaterials = bots
-            .reduce(into: rawMaterials) { acc, bot in
-                acc[bot.key, default: 0] += bot.value
-            }
-
-        // Build the pending bot, and update the bots that are no longer needed to build
-        if let harvestMaterial, hasRawMaterialsForRobot(harvesting: harvestMaterial) {
-            buildBot(harvesting: harvestMaterial)
-            for (material, count) in bots {
-                if count >= blueprint.maxResourceCost[material]! {
-                    botsToNotBuild.insert(material)
-                }
-            }
-        }
-
-        timeRemaining -= 1
-
-        return timeRemaining > 0
-    }
-
-    /// Use this to populate the decision tree. Filters materials by bots NOT TO build, rather than attempting to prioritize bots TO build.
-    ///
-    func botCandidates() -> [Material?] {
-        var candidates: [Material?] = Material
-            .allCases
-            .filter { shouldBuildBot(harvesting: $0) }
-        candidates.append(nil)
-        return candidates
-    }
-
-    /// Heuristics for picking bots to build. See
-    /// https://www.reddit.com/r/adventofcode/comments/zpy5rm/2022_day_19_what_are_your_insights_and
-    /// for additional discussion
-    func shouldBuildBot(harvesting harvestMaterial: Material) -> Bool {
-        guard !botsToNotBuild.contains(harvestMaterial) else {
-            return false
-        }
-
-        return hasRawMaterialsForRobot(harvesting: harvestMaterial)
-
-        //        let numRobots = robots[robot]!
-        //        let numResource = resources[robot]!
-        //        let minutesRemaining = maxMinutes - minute + 1
-        //        let maxNeeded = maxNeeded(resource: robot)
-        //        return numRobots * minutesRemaining + numResource < minutesRemaining * maxNeeded
+    init(rawMaterials: [Material : Int] = [:], bots: [Material : Int] = [.ore: 1]) {
+        self.rawMaterials = rawMaterials
+        self.bots = bots
     }
 
     func hasRawMaterialsForRobot(
-        harvesting harvestMaterial: Material
+        harvesting harvestMaterial: Material,
+        using blueprint: Blueprint
     ) -> Bool {
         for (rawMaterial, cost) in blueprint.botCost[harvestMaterial]! {
             guard rawMaterials[rawMaterial, default: 0] >= cost else {
@@ -199,24 +206,86 @@ struct State: Hashable {
         return true
     }
 
-    /// Assumes you've checked inventory first.
-    mutating func buildBot(harvesting harvestMaterial: Material) {
-        for (rawMaterial, cost) in blueprint.botCost[harvestMaterial]! {
-            rawMaterials[rawMaterial]! -= cost
+    static func process(
+        _ state: State,
+        harvesting harvestMaterial: Material,
+        using blueprint: Blueprint
+    ) -> State {
+        var result = state
+
+        // Allocate raw materials for bot
+        if harvestMaterial != .wait {
+            for (rawMaterial, cost) in blueprint.botCost[harvestMaterial]! {
+                result.rawMaterials[rawMaterial, default: 0] -= cost
+            }
         }
-        bots[harvestMaterial, default: 0] += 1
+
+        // Add raw materials harvested by existing bots
+        for (material, botCount) in result.bots {
+            result.rawMaterials[material, default: 0] += botCount
+        }
+
+        // Build new bot
+        if harvestMaterial != .wait {
+            result.bots[harvestMaterial, default: 0] += 1
+        }
+
+        return result
+    }
+}
+
+extension State: CustomStringConvertible {
+    var description: String {
+        let materials = Material.sortKeys
+
+        let rawMaterialsString = materials
+            .map { "\($0):\(rawMaterials[$0, default: 0])" }
+            .joined(separator: ", ")
+
+        let botsString = materials
+            .map { "\($0):\(bots[$0, default: 0])" }
+            .joined(separator: ", ")
+
+        return "r: \(rawMaterialsString); b: \(botsString)"
+    }
+}
+
+extension State: Comparable {
+    private static var comparators: [(State, Material) -> Int] {
+        [
+            { $0.rawMaterials[$1, default: 0] },
+            { $0.bots[$1, default: 0] }
+        ]
     }
 
+    // From https://github.com/jpignata/adventofcode/blob/main/2022/19/solve.py - best strategies
+    // to consider are the ones with the rarest bots and materials:
+    //     sorted(next_s, key=lambda x: tuple(map(add, x[0], x[1])))[-1000:]
+    //
+    // Expect:
+    //    r: ge:9, ob:8, cl:21, or:4; b: ge:2, ob:2, cl:2, or:1
+    //      >
+    //    r: ge:8, ob:8, cl:17, or:3; b: ge:3, ob:5, cl:5, or:3
+    static func < (lhs: State, rhs: State) -> Bool {
+        for material in Material.sortKeys {
+            if lhs.rawMaterials[material, default: 0] != rhs.rawMaterials[material, default: 0] {
+                return lhs.rawMaterials[material, default: 0] < rhs.rawMaterials[material, default: 0]
+            } else if lhs.bots[material, default: 0] != rhs.bots[material, default: 0] {
+                return lhs.bots[material, default: 0] < rhs.bots[material, default: 0]
+            }
+        }
+        return false
+    }
 }
 
 struct Blueprint: Hashable {
     let id: Int
-
     let botCost: [Material: [Material: Int]]
 
-    /// Return the maximum cost of a resource for any bot type. Geode bots have a cost of Int.max to reflect the fact that we always
-    /// want to build a geode bot
-    let maxResourceCost: [Material: Int]
+    /// Use this to prune branches: if we already have enough bots to harvest the max material cost
+    /// for a turn, there is no reason to build more of them. Note that we always build more geode
+    /// bots.
+    let maxMaterialCost: [Material: Int]
 
     init(_ line: String) {
         let regex = #/Blueprint (?<id>\d+): Each ore robot costs (?<oreRobotOreCost>\d+) ore. Each clay robot costs (?<clayRobotOreCost>\d+) ore. Each obsidian robot costs (?<obsidianRobotOreCost>\d+) ore and (?<obsidianRobotClayCost>\d+) clay. Each geode robot costs (?<geodeRobotOreCost>\d+) ore and (?<geodeRobotObsidianCost>\d+) obsidian./#
@@ -232,17 +301,19 @@ struct Blueprint: Hashable {
         let geodeRobotObsidianCost = Int(result.geodeRobotObsidianCost)!
 
         botCost = [
+            .wait: [:],
             .ore: [.ore: oreRobotOreCost],
             .clay: [.ore: clayRobotOreCost],
             .obsidian: [.ore: obsidianRobotOreCost, .clay: obsidianRobotClayCost],
             .geode: [.ore: geodeRobotOreCost, .obsidian: geodeRobotObsidianCost],
         ]
 
-        maxResourceCost = [
+        maxMaterialCost = [
+            .wait: Int.max,
             .ore: max(oreRobotOreCost, clayRobotOreCost, obsidianRobotOreCost, geodeRobotOreCost),
             .clay: obsidianRobotClayCost,
             .obsidian: geodeRobotObsidianCost,
-            .geode: Int.max
+            .geode: Int.max,
         ]
     }
 }
