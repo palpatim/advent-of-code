@@ -43,74 +43,85 @@ enum Solution {
         let results = bestGeodeCount(forEachBluePrint: blueprints, turns: turns)
 
         let result = results
-            .map { $0.0 * $0.1 }
+            .map { $0.blueprint.id * $0.geodeCount }
             .reduce(0, +)
 
         return result
     }
 
-    static func bestGeodeCount(forEachBluePrint blueprints: [Blueprint], turns: Int) -> [(id: Int, geodeCount: Int)] {
-        var maxGeodeCount = 0
-
-        var results = [(id: Int, geodeCount: Int)]()
+    static func bestGeodeCount(forEachBluePrint blueprints: [Blueprint], turns: Int) -> [State] {
+        var results = [State]()
         for blueprint in blueprints {
-            let result = bestGeodeCount(for: blueprint, turns: turns, maxSoFar: maxGeodeCount)
-            results.append(
-                (
-                    id: blueprint.id,
-                    geodeCount: result
-                )
-            )
-            maxGeodeCount = max(maxGeodeCount, result)
+            let result = bestProductionStrategy(for: blueprint, turns: turns)
+            results.append(result)
         }
         return results
     }
 
-    static func bestGeodeCount(for blueprint: Blueprint, turns _: Int, maxSoFar _: Int) -> Int {
-        var state = State(
+    static func bestProductionStrategy(for blueprint: Blueprint, turns _: Int) -> State {
+        let state = State(
             blueprint: blueprint,
             initialTimeRemaining: 24
         )
-        while state.processNextTick() {
-            // Do nothing
+
+        var maxGeodeState = state
+        // Can never build a bot on the first turn, so it will always be a "wait only" turn
+        var stack = Deque<Action>([.init(state, nil)])
+        var visited = Set<Action>()
+        while !stack.isEmpty {
+            let action = stack.removeLast()
+            guard !visited.contains(action) else {
+                continue
+            }
+            visited.insert(action)
+
+            var currentState = action.state
+            if currentState.processNextTick(buildingBotToHarvest: action.material) {
+                let candidateMaterials = currentState.botCandidates()
+                for candidateMaterial in candidateMaterials {
+                    let action = Action(currentState, candidateMaterial)
+                    if !visited.contains(action) {
+                        stack.append(action)
+                    }
+                }
+            }
+            if currentState.geodeCount > maxGeodeState.geodeCount {
+                maxGeodeState = currentState
+            }
         }
 
-        return state.currentGeodes
+        return maxGeodeState
     }
 }
 
 // MARK: - Structures
 
-enum Material: CaseIterable {
+struct Action: Hashable {
+    let state: State
+    let material: Material?
+    init(_ state: State, _ material: Material?) {
+        self.state = state
+        self.material = material
+    }
+}
+
+enum Material: CaseIterable, Hashable {
     case ore
     case clay
     case obsidian
     case geode
 }
 
-enum Action {
-    case startRobotConstruction(material: Material)
-    case harvestResources
-    case finalize
-}
-
-struct State {
+struct State: Hashable {
     let blueprint: Blueprint
     var timeRemaining: Int
-    var rawMaterials = [Material: Int]()
-    var bots: [Material: Int] = [.ore: 1]
-    var pendingBots = [Material: Int]()
+    var rawMaterials: [Material: Int]
+    var bots: [Material: Int]
+    var botsToNotBuild = Set<Material>()
+    var history: [Int: Material?]
 
-    var currentGeodes: Int {
+    var geodeCount: Int {
         rawMaterials[.geode] ?? 0
-    }
-
-    var geodeBots: Int {
-        bots[.geode] ?? 0
-    }
-
-    var projectedGeodeCount: Int {
-        currentGeodes + (geodeBots * timeRemaining)
     }
 
     init(
@@ -118,39 +129,63 @@ struct State {
         initialTimeRemaining: Int
     ) {
         self.blueprint = blueprint
-        timeRemaining = initialTimeRemaining
+        self.timeRemaining = initialTimeRemaining
+        self.bots = [.ore: 1]
+        self.rawMaterials = [:]
+        self.history = [:]
     }
 
-    mutating func processNextTick() -> Bool {
-        if let harvestMaterial = bestPossibleBuild() {
-            buildBot(harvesting: harvestMaterial)
-        }
-
+    /// Processes the next tick of state. Builds a new bot to harvest `harvestMaterial`, if specified, harvests materials from existing
+    /// bots, and decreases remaining time.
+    ///
+    /// Callers must ensure that there are sufficient raw materials prior to building the bot
+    mutating func processNextTick(buildingBotToHarvest harvestMaterial: Material?) -> Bool {
+        history[timeRemaining] = harvestMaterial
         rawMaterials = bots
             .reduce(into: rawMaterials) { acc, bot in
                 acc[bot.key, default: 0] += bot.value
             }
 
-        bots = pendingBots.reduce(into: bots) { acc, curr in
-            acc[curr.key, default: 0] += curr.value
+        // Build the pending bot, and update the bots that are no longer needed to build
+        if let harvestMaterial, hasRawMaterialsForRobot(harvesting: harvestMaterial) {
+            buildBot(harvesting: harvestMaterial)
+            for (material, count) in bots {
+                if count >= blueprint.maxResourceCost[material]! {
+                    botsToNotBuild.insert(material)
+                }
+            }
         }
-        pendingBots = [:]
 
         timeRemaining -= 1
 
         return timeRemaining > 0
     }
 
-    func bestPossibleBuild() -> Material? {
-        if hasRawMaterialsForRobot(harvesting: .geode) {
-            return .geode
+    /// Use this to populate the decision tree. Filters materials by bots NOT TO build, rather than attempting to prioritize bots TO build.
+    ///
+    func botCandidates() -> [Material?] {
+        var candidates: [Material?] = Material
+            .allCases
+            .filter { shouldBuildBot(harvesting: $0) }
+        candidates.append(nil)
+        return candidates
+    }
+
+    /// Heuristics for picking bots to build. See
+    /// https://www.reddit.com/r/adventofcode/comments/zpy5rm/2022_day_19_what_are_your_insights_and
+    /// for additional discussion
+    func shouldBuildBot(harvesting harvestMaterial: Material) -> Bool {
+        guard !botsToNotBuild.contains(harvestMaterial) else {
+            return false
         }
 
-        if hasRawMaterialsForRobot(harvesting: .obsidian) {
-            return .obsidian
-        }
+        return hasRawMaterialsForRobot(harvesting: harvestMaterial)
 
-        return nil
+        //        let numRobots = robots[robot]!
+        //        let numResource = resources[robot]!
+        //        let minutesRemaining = maxMinutes - minute + 1
+        //        let maxNeeded = maxNeeded(resource: robot)
+        //        return numRobots * minutesRemaining + numResource < minutesRemaining * maxNeeded
     }
 
     func hasRawMaterialsForRobot(
@@ -169,25 +204,19 @@ struct State {
         for (rawMaterial, cost) in blueprint.botCost[harvestMaterial]! {
             rawMaterials[rawMaterial]! -= cost
         }
-        pendingBots[harvestMaterial, default: 0] += 1
+        bots[harvestMaterial, default: 0] += 1
     }
 
-    func inventoryRemainingAfterBuildingRobot(
-        harvesting harvestMaterial: Material
-    ) -> [Material: Int] {
-        let inventory = blueprint
-            .botCost[harvestMaterial]!
-            .reduce(into: [Material: Int]()) { acc, curr in
-                acc[curr.key] = rawMaterials[curr.key, default: 0] - curr.value
-            }
-        return inventory
-    }
 }
 
-struct Blueprint {
+struct Blueprint: Hashable {
     let id: Int
 
     let botCost: [Material: [Material: Int]]
+
+    /// Return the maximum cost of a resource for any bot type. Geode bots have a cost of Int.max to reflect the fact that we always
+    /// want to build a geode bot
+    let maxResourceCost: [Material: Int]
 
     init(_ line: String) {
         let regex = #/Blueprint (?<id>\d+): Each ore robot costs (?<oreRobotOreCost>\d+) ore. Each clay robot costs (?<clayRobotOreCost>\d+) ore. Each obsidian robot costs (?<obsidianRobotOreCost>\d+) ore and (?<obsidianRobotClayCost>\d+) clay. Each geode robot costs (?<geodeRobotOreCost>\d+) ore and (?<geodeRobotObsidianCost>\d+) obsidian./#
@@ -207,6 +236,13 @@ struct Blueprint {
             .clay: [.ore: clayRobotOreCost],
             .obsidian: [.ore: obsidianRobotOreCost, .clay: obsidianRobotClayCost],
             .geode: [.ore: geodeRobotOreCost, .obsidian: geodeRobotObsidianCost],
+        ]
+
+        maxResourceCost = [
+            .ore: max(oreRobotOreCost, clayRobotOreCost, obsidianRobotOreCost, geodeRobotOreCost),
+            .clay: obsidianRobotClayCost,
+            .obsidian: geodeRobotObsidianCost,
+            .geode: Int.max
         ]
     }
 }
